@@ -9,6 +9,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>我的播客</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
@@ -64,8 +67,14 @@
   .badge { position: absolute; top: -5px; right: -5px; min-width: 19px; height: 19px; padding: 0 5px;
     border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: 0 0 0 2px var(--bg);
     font: 700 11.5px/19px var(--sans); text-align: center; font-variant-numeric: tabular-nums; }
-  #manage { display: block; margin: 26px 0 0; color: var(--dim); font-size: 14px; padding: 8px 0;
+  .foot { display: flex; gap: 22px; margin: 26px 0 0; }
+  .foot button { color: var(--dim); font-size: 14px; padding: 8px 0;
     text-decoration: underline; text-underline-offset: 3px; }
+  .bk p { font-size: 14.5px; line-height: 1.65; color: var(--dim); margin: 0 0 14px; }
+  .bk .act { display: block; width: 100%; text-align: left; border-top: 1px solid var(--line); padding: 14px 0; }
+  .bk .act b { display: block; font: 500 16px/1.45 var(--serif); }
+  .bk .act span { display: block; font-size: 12.5px; color: var(--dim); margin-top: 3px; }
+  .bk .res { font-size: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
   .mrow { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 9px 0;
     border-top: 1px solid var(--line); }
   .mrow .cover { width: 40px; flex: none; font-size: 20px; border-radius: 6px; }
@@ -251,6 +260,7 @@ function viewShow() {
   return m ? SHOWS.find(s => s.id === m[1]) || null : null;
 }
 function viewQueue() { return location.hash === "#queue"; }
+function viewBackup() { return location.hash === "#backup"; }
 
 // ----- 播放列表 -----
 function toggleQueue(id) {
@@ -441,12 +451,81 @@ function manageRow(s) {
   return b;
 }
 
+// ----- 备份与恢复：进度只存在这个浏览器里，导出成文件可以兜底 -----
+let backupMsg = "";
+function exportBackup() {
+  const d = new Date();
+  const name = "播客进度备份-" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0") + ".json";
+  const data = { app: "xyzplayer", version: 1, exported: d.toISOString(), state: state };
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }));
+  const link = document.createElement("a");
+  link.href = url; link.download = name;
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+  const n = Object.keys(state.prog).length;
+  backupMsg = "已导出 " + name + "，里面有 " + n + " 集的进度。文件在手机的“下载”里。";
+  render();
+}
+function importBackup(text) {
+  let b;
+  try { b = JSON.parse(text); } catch (e) { b = null; }
+  const src = b && b.app === "xyzplayer" && b.state && typeof b.state.prog === "object" ? b.state : null;
+  if (!src) { backupMsg = "这个文件不是本页面导出的备份，没有做任何改动。"; render(); return; }
+  // 每一集保留较新的那份进度；播放列表、倍速、隐藏的节目以备份为准
+  let taken = 0;
+  Object.keys(src.prog).forEach(id => {
+    const x = src.prog[id];
+    if (!/^[0-9a-f]{24}$/.test(id) || !x || typeof x !== "object") return;
+    const mine = state.prog[id];
+    if (!mine || (x.at || 0) > (mine.at || 0) || (x.done && !mine.done && !(mine.at > (x.at || 0)))) {
+      state.prog[id] = { t: Number(x.t) || 0, d: Number(x.d) || undefined, at: Number(x.at) || undefined, done: !!x.done };
+      taken++;
+    }
+  });
+  if (Array.isArray(src.queue)) state.queue = src.queue.filter(id => EPS[id]);
+  if (src.hidden && typeof src.hidden === "object") state.hidden = src.hidden;
+  if (src.showRate && typeof src.showRate === "object") state.showRate = src.showRate;
+  if (RATES.includes(src.rate)) state.rate = src.rate;
+  if (!cur && src.last && EPS[src.last]) state.last = src.last;
+  save(); applyRate();
+  backupMsg = "已恢复：更新了 " + taken + " 集的进度，播放列表有 " + state.queue.length + " 集。";
+  render();
+}
+function backupView(list) {
+  const head = el("div", "qhead");
+  head.append(el("h1", null, "备份与恢复"));
+  list.appendChild(head);
+  const box = el("div", "bk");
+  box.appendChild(el("p", null, "听到哪、播放列表、倍速，都只存在这台手机的这个浏览器里。清除浏览器数据或换手机之前，先导出一份。导出的是一个小文件，可以再存到网盘里。"));
+  const ex = el("button", "act");
+  ex.append(el("b", null, "导出备份文件"), el("span", null, "现在有 " + Object.keys(state.prog).length + " 集的进度"));
+  ex.onclick = exportBackup;
+  const im = el("button", "act");
+  im.append(el("b", null, "从备份文件恢复"), el("span", null, "每一集保留较新的进度；播放列表、倍速、隐藏的节目以备份为准"));
+  const file = document.createElement("input");
+  file.type = "file"; file.accept = "application/json,.json"; file.hidden = true;
+  file.onchange = () => {
+    const f = file.files && file.files[0];
+    if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => importBackup(String(rd.result));
+    rd.onerror = () => { backupMsg = "这个文件读不出来，没有做任何改动。"; render(); };
+    rd.readAsText(f);
+  };
+  im.onclick = () => file.click();
+  box.append(ex, im, file);
+  if (backupMsg) box.appendChild(el("div", "res", backupMsg));
+  list.appendChild(box);
+}
+
 // ----- 渲染 -----
 function render() {
   const list = $("list");
   const show = viewShow();
   const inQueue = viewQueue();
-  document.body.classList.toggle("inshow", !!show || inQueue);
+  const inBackup = viewBackup();
+  document.body.classList.toggle("inshow", !!show || inQueue || inBackup);
   const qb = $("qbtn");
   qb.textContent = "播放列表";
   if (state.queue.length) qb.append(" ", el("b", null, String(state.queue.length)));
@@ -454,6 +533,8 @@ function render() {
   if (loadErr) { list.appendChild(el("div", "note", loadErr)); return; }
   if (!storageOK) list.appendChild(el("div", "note", "这个浏览器不让保存数据，关掉页面后进度会丢。"));
   const playable = Object.values(EPS);
+
+  if (inBackup) { backupView(list); return; }
 
   if (inQueue) {
     const items = state.queue.map(id => EPS[id]).filter(Boolean);
@@ -524,10 +605,18 @@ function render() {
     }
   }
   const hiddenCount = SHOWS.filter(s => state.hidden[s.id]).length;
+  const foot = el("div", "foot");
   const mb = el("button", null, managing ? "完成" : (hiddenCount ? "管理节目（隐藏了 " + hiddenCount + " 档）" : "管理节目"));
   mb.id = "manage";
   mb.onclick = () => { managing = !managing; render(); };
-  list.appendChild(mb);
+  foot.appendChild(mb);
+  if (!managing) {
+    const bb = el("button", null, "备份与恢复");
+    bb.id = "backup";
+    bb.onclick = () => { backupMsg = ""; location.hash = "backup"; };
+    foot.appendChild(bb);
+  }
+  list.appendChild(foot);
 }
 
 // ----- 播放 -----
