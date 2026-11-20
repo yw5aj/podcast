@@ -5,8 +5,8 @@
 - `index.html`：播放器页面（播放、记进度、搜索、隐藏节目）。
 - `shows.json`：节目和单集数据，页面只读这个文件。
 - `update.py`：从小宇宙的公开网页读取最新单集，更新 `shows.json`。
-- `.github/workflows/update.yml`：GitHub Actions 定时运行 `update.py`，每天两次
-  （UTC 0:43 和 12:43）；`shows.json` 或脚本有改动被推送时也会跑一次。
+- `.github/workflows/update.yml`：GitHub Actions 定时运行 `update.py`，每天四次
+  （UTC 1:17、7:17、13:17、19:17；GitHub 的定时偶尔会漏，多排几次保险）；`shows.json` 或脚本有改动被推送时也会跑一次。
 - `update-log.txt`：最近一次运行的结果，每档节目一行。
 
 ## 规则
@@ -14,7 +14,7 @@
 - 数据只从小宇宙自己的网页取（节目页 `/podcast/<id>` 和单集页 `/episode/<id>`）。
 - 只记录标题、时长、日期、音频地址和封面地址。不下载、不保存任何音频或图片。
 - 只增不减：已有的单集不会被删除。
-- 访问要克制：每天两次，请求之间有间隔。
+- 访问要克制：每天四次，每次每档节目只读一个页面，请求之间有间隔。
 
 ## 加一档新节目
 
