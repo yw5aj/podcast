@@ -39,9 +39,14 @@
     color: var(--ink); font: 16px var(--sans); padding: 8px 0; }
   #q::placeholder { color: var(--dim); }
   #q:focus { outline: none; border-bottom-color: var(--amber); }
+  .topbar { display: flex; align-items: center; gap: 14px; }
+  .topbar #q { flex: 1; min-width: 0; }
+  #qbtn { flex: none; font-size: 14px; white-space: nowrap; border: 1px solid var(--line); border-radius: 16px;
+    padding: 6px 12px; }
+  #qbtn b { color: var(--amber); font-variant-numeric: tabular-nums; }
   #showbar { display: none; }
   #back2 { color: var(--dim); font-size: 14px; padding: 8px 12px 8px 0; }
-  body.inshow #q { display: none; }
+  body.inshow .topbar { display: none; }
   body.inshow #showbar { display: block; }
 
   main { padding: 8px 16px 230px; max-width: 672px; margin: 0 auto; }
@@ -74,7 +79,9 @@
   /* 节目页抬头 */
   .showhead { display: flex; gap: 14px; align-items: center; padding: 4px 0 14px; }
   .showhead .cover { width: 72px; flex: none; font-size: 34px; }
-  .showhead h1 { font: 700 22px/1.3 var(--serif); margin: 0; }
+  .showhead h1, .qhead h1 { font: 700 22px/1.3 var(--serif); margin: 0; }
+  .qhead { padding: 4px 0 14px; }
+  .qhead p { margin: 3px 0 0; font-size: 13px; color: var(--dim); }
   .showhead p { margin: 3px 0 0; font-size: 13px; color: var(--dim); }
 
   /* 单集：一行一集，用线分开，不用卡片 */
@@ -87,7 +94,16 @@
   .ep.done .t { color: var(--dim); }
   .ep.now .t { color: var(--amber); }
   .ep .bar { position: absolute; left: 0; top: -1px; height: 2px; background: var(--amber); }
-  .ep .chk { flex: none; width: 44px; color: var(--dim); font-size: 17px; }
+  .ep .chk { flex: none; width: 40px; color: var(--dim); font-size: 17px; }
+  .ep .add { flex: none; width: 40px; color: var(--dim); font-size: 22px; line-height: 1; }
+  .ep .add.in { color: var(--amber); }
+  .ep .ord { flex: none; width: 38px; color: var(--dim); font-size: 17px; }
+  .ep .ord:disabled { opacity: .25; }
+  .ep .num { flex: none; width: 26px; padding-top: 14px; color: var(--dim); font: 500 15px/1.45 var(--serif);
+    font-variant-numeric: tabular-nums; }
+  .ep.now .num { color: var(--amber); }
+  #startq { margin: 2px 0 16px; background: var(--amber); color: var(--amber-ink); font-size: 15px; font-weight: 600;
+    padding: 9px 18px; border-radius: 20px; }
   .ep.done .chk { color: var(--amber); }
 
   /* 播放器 */
@@ -110,7 +126,10 @@
 <body>
 <header>
   <div class="wrap">
-    <input id="q" type="search" placeholder="搜索单集标题或嘉宾" aria-label="搜索单集" autocomplete="off">
+    <div class="topbar">
+      <input id="q" type="search" placeholder="搜索单集标题或嘉宾" aria-label="搜索单集" autocomplete="off">
+      <button id="qbtn">播放列表</button>
+    </div>
     <div id="showbar"><button id="back2">‹ 全部节目</button></div>
   </div>
 </header>
@@ -148,13 +167,14 @@ let SHOWS = [];
 const EPS = {};
 
 // ----- 存储（只在当前浏览器里）-----
-let state = { prog: {}, rate: 1, last: null, hidden: {} };
+let state = { prog: {}, rate: 1, last: null, hidden: {}, queue: [] };
 let storageOK = true;
 try {
   const raw = localStorage.getItem(KEY);
   if (raw) state = Object.assign(state, JSON.parse(raw));
 } catch (e) { storageOK = false; }
 if (!state.hidden) state.hidden = {};
+if (!Array.isArray(state.queue)) state.queue = [];
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOK = false; }
 }
@@ -183,6 +203,24 @@ function viewShow() {
   const m = /^#s-([0-9a-f]{24})$/.exec(location.hash);
   return m ? SHOWS.find(s => s.id === m[1]) || null : null;
 }
+function viewQueue() { return location.hash === "#queue"; }
+function toggleQueue(id) {
+  const i = state.queue.indexOf(id);
+  if (i >= 0) state.queue.splice(i, 1); else state.queue.push(id);
+  save(); render();
+}
+function moveQueue(i, d) {
+  const j = i + d;
+  if (j < 0 || j >= state.queue.length) return;
+  const q = state.queue;
+  [q[i], q[j]] = [q[j], q[i]];
+  save(); render();
+}
+function nextInQueue() {
+  const i = state.queue.indexOf(cur);
+  const n = i >= 0 ? state.queue[i + 1] : state.queue[0];
+  if (n && EPS[n]) load(n, true);
+}
 function unheardOf(s) {
   return s.episodes.filter(e => e.audio && !(state.prog[e.id] || {}).done).length;
 }
@@ -208,12 +246,36 @@ function row(e, withShow) {
     if (!q.done) q.t = 0;
     save(); render();
   };
-  r.append(b, c);
+  const inQ = state.queue.includes(e.id);
+  const add = el("button", "add" + (inQ ? " in" : ""), inQ ? "−" : "+");
+  add.setAttribute("aria-label", inQ ? "从播放列表移除" : "加入播放列表");
+  add.onclick = () => toggleQueue(e.id);
+  r.append(b, add, c);
   if (!p.done && p.t > 5) {
     const bar = el("div", "bar");
     bar.style.width = Math.min(100, p.t / (p.d || e.min * 60) * 100) + "%";
     r.appendChild(bar);
   }
+  return r;
+}
+
+// ----- 播放列表里的一行：序号、标题、上移、下移、移除 -----
+function queueRow(e, i, n) {
+  const p = state.prog[e.id] || {};
+  const r = el("div", "ep" + (e.id === cur ? " now" : ""));
+  const b = el("button", "main");
+  const m = el("div", "m");
+  m.append(el("span", null, e.show), el("span", null, e.min + " 分钟"));
+  if (!p.done && p.t > 5) m.appendChild(el("span", "at", "听到 " + fmt(p.t)));
+  b.append(el("div", "t", e.title), m);
+  b.onclick = () => play(e.id);
+  const up = el("button", "ord", "↑"), down = el("button", "ord", "↓"), rm = el("button", "ord", "×");
+  up.setAttribute("aria-label", "上移"); down.setAttribute("aria-label", "下移"); rm.setAttribute("aria-label", "从播放列表移除");
+  up.disabled = i === 0; down.disabled = i === n - 1;
+  up.onclick = () => moveQueue(i, -1);
+  down.onclick = () => moveQueue(i, 1);
+  rm.onclick = () => toggleQueue(e.id);
+  r.append(el("div", "num", String(i + 1)), b, up, down, rm);
   return r;
 }
 
@@ -259,11 +321,35 @@ function tile(s) {
 function render() {
   const list = $("list");
   const show = viewShow();
-  document.body.classList.toggle("inshow", !!show);
+  const inQueue = viewQueue();
+  document.body.classList.toggle("inshow", !!show || inQueue);
+  const qb = $("qbtn");
+  qb.textContent = "播放列表";
+  if (state.queue.length) { qb.append(" ", el("b", null, String(state.queue.length))); }
   list.textContent = "";
   if (loadErr) { list.appendChild(el("div", "note", loadErr)); return; }
   if (!storageOK) list.appendChild(el("div", "note", "这个浏览器不让保存数据，关掉页面后进度会丢。"));
   const playable = Object.values(EPS);
+
+  if (inQueue) {
+    const items = state.queue.map(id => EPS[id]).filter(Boolean);
+    const head = el("div", "qhead");
+    head.append(el("h1", null, "播放列表"),
+      el("p", null, items.length ? items.length + " 集，放完一集自动接着放下一集" : "只存在这台手机上"));
+    list.appendChild(head);
+    if (!items.length) {
+      list.appendChild(el("div", "note", "列表还是空的。进任意一档节目，点单集右边的 +，把它加进来。"));
+      return;
+    }
+    if (!state.queue.includes(cur)) {
+      const st = el("button", null, "从第一集开始放");
+      st.id = "startq";
+      st.onclick = () => load(items[0].id, true);
+      list.appendChild(st);
+    }
+    items.forEach((e, i) => list.appendChild(queueRow(e, i, items.length)));
+    return;
+  }
 
   if (show) {
     const ok = show.episodes.filter(e => e.audio);
@@ -390,8 +476,14 @@ a.addEventListener("play", () => { $("play").textContent = "❚❚"; $("play").s
 a.addEventListener("pause", () => { $("play").textContent = "▶"; $("play").setAttribute("aria-label", "播放"); record(true); render(); });
 a.addEventListener("ended", () => {
   const p = state.prog[cur] = state.prog[cur] || {};
-  p.done = true; p.t = 0; save(); render();
-  if (SLEEPS[sleepIdx] === -1) setSleep(0);
+  p.done = true; p.t = 0;
+  // 这一集在播放列表里：放完就移出列表，接着放它后面那一集
+  let next = null;
+  const i = state.queue.indexOf(cur);
+  if (i >= 0) { state.queue.splice(i, 1); next = state.queue[i] || null; }
+  save(); render();
+  if (SLEEPS[sleepIdx] === -1) { setSleep(0); return; }  // 定时"本集完"：不接着放
+  if (next && EPS[next]) load(next, true);
 });
 a.addEventListener("error", () => {
   if (!cur) return;
@@ -432,6 +524,7 @@ seek.addEventListener("change", () => {
 });
 $("q").addEventListener("input", () => { query = $("q").value.trim(); managing = false; render(); });
 $("back2").onclick = () => { location.hash = ""; };
+$("qbtn").onclick = () => { location.hash = "queue"; };
 window.addEventListener("hashchange", () => { managing = false; render(); window.scrollTo(0, 0); });
 
 if ("mediaSession" in navigator) {
@@ -441,6 +534,7 @@ if ("mediaSession" in navigator) {
   set("pause", () => a.pause());
   set("seekbackward", () => skip(-SKIP));
   set("seekforward", () => skip(SKIP));
+  set("nexttrack", nextInQueue);
   set("seekto", d => { if (d && d.seekTime != null) { a.currentTime = d.seekTime; record(true); } });
 }
 document.addEventListener("visibilitychange", () => { if (document.hidden) record(true); });
@@ -455,6 +549,7 @@ fetch("shows.json?t=" + Date.now())
     SHOWS.forEach(s => s.episodes.forEach(e => {
       if (e.audio) EPS[e.id] = Object.assign({ show: s.title, cover: s.cover || null }, e);
     }));
+    state.queue = state.queue.filter(id => EPS[id]);
     render();
     if (state.last && EPS[state.last]) load(state.last, false);
   })
