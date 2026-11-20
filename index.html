@@ -94,7 +94,11 @@
   .ep.done .t { color: var(--dim); }
   .ep.now .t { color: var(--amber); }
   .ep .bar { position: absolute; left: 0; top: -1px; height: 2px; background: var(--amber); }
-  .ep .chk { flex: none; width: 40px; color: var(--dim); font-size: 17px; }
+  .ep .chk { flex: none; width: 50px; display: flex; align-items: center; justify-content: flex-start; }
+  .ep .chk::before { content: ""; display: flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 17px; border: 1.5px solid var(--dim); box-sizing: border-box;
+    font: 600 18px/1 var(--sans); }
+  .ep.done .chk::before { content: "✓"; background: var(--line); border-color: var(--line); color: var(--ink); }
   .ep .add { flex: none; width: 54px; display: flex; align-items: center; justify-content: center; }
   .ep .add::before { content: "+"; display: flex; align-items: center; justify-content: center;
     width: 38px; height: 38px; border-radius: 19px; border: 1.5px solid var(--dim); color: var(--ink);
@@ -112,7 +116,6 @@
   .ep.now .num { color: var(--amber); }
   #startq { margin: 2px 0 16px; background: var(--amber); color: var(--amber-ink); font-size: 15px; font-weight: 600;
     padding: 9px 18px; border-radius: 20px; }
-  .ep.done .chk { color: var(--amber); }
 
   /* 播放器 */
   #player { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface);
@@ -246,7 +249,7 @@ function row(e, withShow) {
   else if (p.t > 5) m.appendChild(el("span", "at", "听到 " + fmt(p.t)));
   b.append(el("div", "t", e.title), m);
   b.onclick = () => play(e.id);
-  const c = el("button", "chk", p.done ? "✓" : "○");
+  const c = el("button", "chk");
   c.setAttribute("aria-label", p.done ? "标为未听" : "标为已听");
   c.onclick = () => {
     const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
@@ -258,7 +261,7 @@ function row(e, withShow) {
   const add = el("button", "add" + (inQ ? " in" : ""));
   add.setAttribute("aria-label", inQ ? "从播放列表移除" : "加入播放列表");
   add.onclick = () => toggleQueue(e.id);
-  r.append(b, add, c);
+  r.append(c, b, add);
   if (!p.done && p.t > 5) {
     const bar = el("div", "bar");
     bar.style.width = Math.min(100, p.t / (p.d || e.min * 60) * 100) + "%";
