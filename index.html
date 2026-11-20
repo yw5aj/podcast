@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#14181a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>我的播客</title>
+<style>
+  :root {
+    --bg: #14181a; --panel: #1d2326; --line: #2c3438; --text: #e8ecea;
+    --dim: #8d9a96; --accent: #9cc3b0; --accent-ink: #10201a; --warn: #e8a08a;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif; }
+  header { padding: 20px 16px 8px; }
+  header h1 { margin: 0; font-size: 22px; font-weight: 700; }
+  header p { margin: 2px 0 0; color: var(--dim); font-size: 13px; }
+  main { padding: 0 12px 240px; max-width: 720px; margin: 0 auto; }
+  h2 { font-size: 14px; color: var(--accent); font-weight: 600; margin: 22px 4px 8px; letter-spacing: .04em; }
+  .ep { display: flex; align-items: stretch; background: var(--panel); border-radius: 12px;
+    margin-bottom: 8px; overflow: hidden; position: relative; }
+  .ep.now { outline: 1.5px solid var(--accent); }
+  .ep button.main { flex: 1; min-width: 0; text-align: left; background: none; border: 0; color: inherit;
+    font: inherit; padding: 12px 6px 14px 14px; cursor: pointer; }
+  .ep .t { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+  .ep.done .t { color: var(--dim); }
+  .ep .m { font-size: 12.5px; color: var(--dim); margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .ep .bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); }
+  .ep button.chk { width: 48px; background: none; border: 0; color: var(--dim); font-size: 18px; cursor: pointer; }
+  .ep.done button.chk { color: var(--accent); }
+
+  #player { position: fixed; left: 0; right: 0; bottom: 0; background: #191e21; border-top: 1px solid var(--line);
+    padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); }
+  #player .in { max-width: 720px; margin: 0 auto; }
+  #pTitle { font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #pShow { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #msg { font-size: 12.5px; color: var(--warn); margin-top: 4px; display: none; }
+  #seek { width: 100%; margin: 10px 0 2px; accent-color: var(--accent); height: 24px; }
+  .times { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim);
+    font-variant-numeric: tabular-nums; }
+  .ctl { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .ctl button { background: none; border: 0; color: var(--text); font: inherit; cursor: pointer;
+    min-width: 52px; height: 48px; border-radius: 24px; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .ctl button.sm { color: var(--dim); font-size: 13px; }
+  .ctl button.sm.on { color: var(--accent); }
+  .ctl button.skip { font-size: 15px; font-weight: 600; }
+  #play { background: var(--accent); color: var(--accent-ink); width: 60px; height: 60px; border-radius: 30px;
+    font-size: 24px; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>我的播客</h1>
+  <p id="sub">点一集开始播放，进度会自动记住</p>
+</header>
+<main id="list"></main>
+
+<div id="player">
+  <div class="in">
+    <div id="pTitle">还没有在播放的节目</div>
+    <div id="pShow">&nbsp;</div>
+    <div id="msg"></div>
+    <input id="seek" type="range" min="0" max="1" step="1" value="0" aria-label="播放进度" disabled>
+    <div class="times"><span id="cur">0:00</span><span id="rem">0:00</span></div>
+    <div class="ctl">
+      <button id="rate" class="sm" aria-label="播放速度">1x</button>
+      <button id="back" class="skip" aria-label="后退15秒">−15</button>
+      <button id="play" aria-label="播放">▶</button>
+      <button id="fwd" class="skip" aria-label="前进15秒">+15</button>
+      <button id="sleep" class="sm" aria-label="睡眠定时">定时</button>
+    </div>
+  </div>
+</div>
+<audio id="a" preload="metadata"></audio>
+
+<script>
+// ===== 节目数据（2026-11-19 抓取）=====
+const SHOWS = [
+ {
+  "id": "625635587bfca4e73e990703",
+  "title": "岩中花述",
+  "episodes": [
+   {
+    "id": "6aafab73ac389df82734bbf3",
+    "title": "S9E9 鲁豫对话刘索拉｜一生不断找北，直到天高地广",
+    "min": 112,
+    "date": "2026-09-23",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lnEAf-aVkE89Z_ImU_6V0EiTfaoK.m4a"
+   },
+   {
+    "id": "6a9d6a20f03e74ee6b05f71d",
+    "title": "S9E8 鲁豫对话庆山｜从前要如我所愿，现在接受如其所是",
+    "min": 116,
+    "date": "2026-09-07",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lskpIc9plRoGtsSmf_9z_8v3LloQ.m4a"
+   },
+   {
+    "id": "6a719a98ab3a91c24a0f95e2",
+    "title": "S9E7 鲁豫对话芮迺伟｜一生手谈，半生漂泊，归来棋未凉",
+    "min": 99,
+    "date": "2026-08-05",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/loWNxAmmxzij3N5Ktk0hFAascPmC.m4a"
+   },
+   {
+    "id": "6a5f4f206356eb2d9be61d72",
+    "title": "S9E6 鲁豫对话杨贵媚｜菜市场长大的「小妈妈」，把角色活成人生",
+    "min": 97,
+    "date": "2026-07-22",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/llomnFm5RyTlZMf3iS7MPi_HKCOs.m4a"
+   },
+   {
+    "id": "6a4d11412e335a35a80fa724",
+    "title": "S9E5 鲁豫对话陈玉亭｜失去一切之前，我必须成为「白眼狼」",
+    "min": 140,
+    "date": "2026-07-08",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqKjKFxY84L1Nao5IewI6zVUTgsg.m4a"
+   },
+   {
+    "id": "6a27f68a41404ca3b66736b6",
+    "title": "S9E4 鲁豫对话蒙曼｜生命不要早知如此，我决定更勇敢",
+    "min": 117,
+    "date": "2026-06-10",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqJU-KTp1HMLFRh8C3Jqev6W_GGB.m4a"
+   },
+   {
+    "id": "6a1eb4cc7444b57222322dcf",
+    "title": "S9E3 鲁豫对话蔡皋｜我本布衣，种花种草种春天",
+    "min": 80,
+    "date": "2026-06-03",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/liZInOnroLcuftHDNBrJMUZTgdCB.m4a"
+   },
+   {
+    "id": "6a1546f3ff7b9a8c0a5b56fe",
+    "title": "S9E2 鲁豫对话张诺｜我不优秀，但我依然是一个胜利者",
+    "min": 79,
+    "date": "2026-05-27",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/ln75QhLvXAs01AWTgKmgumbjH2lP.m4a"
+   },
+   {
+    "id": "6a0be7321b7bd502956b80cb",
+    "title": "S9E1 鲁豫对话张赞英｜那朵叫「赞英」的花",
+    "min": 86,
+    "date": "2026-05-20",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpKVxF2k5XcsXuJHms-QVF0VUVkI.m4a"
+   },
+   {
+    "id": "69bf524c2d318777c9169361",
+    "title": "S8E9 鲁豫对话李睿｜我只是一名记者，留在了战争发生的地方",
+    "min": 108,
+    "date": "2026-03-22",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqi93H3dBOfO_NOVmv5hHCieWVQk.m4a"
+   },
+   {
+    "id": "698b3e7466e2c30377dcfa2e",
+    "title": "S8E8 鲁豫对话张虹｜冰场上的向日葵，日复一日、向光疯长",
+    "min": 89,
+    "date": "2026-02-11",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lg6e11IUmHpTrtUeYy7xfnYwz_SK.m4a"
+   },
+   {
+    "id": "6953815414db1df9ef81f6b4",
+    "title": "S8E7 鲁豫对话李银河｜从「三反」到「银河」，她走出了时代",
+    "min": 85,
+    "date": "2025-12-31",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lldnBukGmdYBPKhVu3iMbIbGrmn6.m4a"
+   },
+   {
+    "id": "69416af04c65abaff352d88f",
+    "title": "S8E6 鲁豫对话鸟鸟｜没有魅力的人，也值得拥有世界",
+    "min": 87,
+    "date": "2025-12-17",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpP0InS7yMy1g7yRAtWTQ_G_AoBC.m4a"
+   },
+   {
+    "id": "6937f38c4ef12f9fe9be1633",
+    "title": "S8E5 鲁豫对话朱天文｜他已登岸归家，吾独续写「巫」言",
+    "min": 89,
+    "date": "2025-12-10",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lljTIALZuXN1DJRRWQYyZ6FCVc9X.m4a"
+   },
+   {
+    "id": "691c439f6018cc2c986d297a",
+    "title": "S8E4 鲁豫对话黎紫书｜飞向更高远的天空，即便空气稀薄",
+    "min": 102,
+    "date": "2025-11-19",
+    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpb6VBjdb6ib5f16I8qZ-Ojq6FWj.m4a"
+   }
+  ]
+ }
+];
+
+const SKIP = 15;
+const RATES = [0.8, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+const SLEEPS = [0, 15, 30, 60, -1]; // 分钟；-1 = 本集结束
+const KEY = "xyzplayer.v1";
+
+const $ = id => document.getElementById(id);
+const a = $("a");
+const EPS = {};
+SHOWS.forEach(s => s.episodes.forEach(e => { EPS[e.id] = Object.assign({ show: s.title }, e); }));
+
+// ----- 存储 -----
+let state = { prog: {}, rate: 1, last: null };
+let storageOK = true;
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) state = Object.assign(state, JSON.parse(raw));
+} catch (e) { storageOK = false; }
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOK = false; }
+}
+
+let cur = null;        // 当前单集 id
+let pendingSeek = null; // 元数据加载后要跳到的位置
+let seeking = false;
+let sleepIdx = 0, sleepAt = 0;
+let lastSave = 0;
+
+function fmt(s) {
+  s = Math.max(0, Math.floor(s || 0));
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(ss).padStart(2, "0");
+}
+function rateLabel(r) { return r + "x"; }
+
+// ----- 列表 -----
+function render() {
+  const list = $("list");
+  list.textContent = "";
+  SHOWS.forEach(s => {
+    const h = document.createElement("h2");
+    h.textContent = s.title;
+    list.appendChild(h);
+    s.episodes.forEach(e => {
+      const p = state.prog[e.id] || {};
+      const row = document.createElement("div");
+      row.className = "ep" + (p.done ? " done" : "") + (e.id === cur ? " now" : "");
+      const b = document.createElement("button");
+      b.className = "main";
+      const t = document.createElement("div"); t.className = "t"; t.textContent = e.title;
+      const m = document.createElement("div"); m.className = "m";
+      let meta = (e.date ? e.date + " · " : "") + e.min + " 分钟";
+      if (p.done) meta += " · 已听完";
+      else if (p.t > 5) meta += " · 听到 " + fmt(p.t);
+      m.textContent = meta;
+      b.append(t, m);
+      b.onclick = () => play(e.id);
+      const c = document.createElement("button");
+      c.className = "chk";
+      c.textContent = p.done ? "✓" : "○";
+      c.setAttribute("aria-label", p.done ? "标为未听" : "标为已听");
+      c.onclick = () => {
+        const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
+        q.done = !q.done;
+        if (!q.done) q.t = 0;
+        save(); render();
+      };
+      row.append(b, c);
+      if (!p.done && p.t > 5) {
+        const d = p.d || e.min * 60;
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.width = Math.min(100, p.t / d * 100) + "%";
+        row.appendChild(bar);
+      }
+      list.appendChild(row);
+    });
+  });
+  if (!storageOK) $("sub").textContent = "注意：这个浏览器不让保存数据，关掉页面后进度会丢";
+}
+
+// ----- 播放 -----
+function showMsg(t) { const m = $("msg"); m.textContent = t || ""; m.style.display = t ? "block" : "none"; }
+
+function load(id, autoplay) {
+  const e = EPS[id];
+  if (!e) return;
+  if (cur && cur !== id) record(true);
+  cur = id;
+  state.last = id; save();
+  showMsg("");
+  const p = state.prog[id] || {};
+  pendingSeek = (!p.done && p.t > 5) ? p.t : 0;
+  a.src = e.audio;
+  a.playbackRate = state.rate;
+  $("pTitle").textContent = e.title;
+  $("pShow").textContent = e.show;
+  $("seek").disabled = false;
+  $("seek").max = p.d || e.min * 60;
+  $("seek").value = pendingSeek;
+  $("cur").textContent = fmt(pendingSeek);
+  $("rem").textContent = "-" + fmt(($("seek").max) - pendingSeek);
+  if ("mediaSession" in navigator) {
+    try { navigator.mediaSession.metadata = new MediaMetadata({ title: e.title, artist: e.show }); } catch (err) {}
+  }
+  render();
+  if (autoplay) a.play().catch(() => showMsg("没能开始播放，再点一次播放键试试"));
+}
+function play(id) {
+  if (id === cur) { toggle(); return; }
+  load(id, true);
+}
+function toggle() {
+  if (!cur) return;
+  if (a.paused) a.play().catch(() => showMsg("没能开始播放，再点一次播放键试试"));
+  else a.pause();
+}
+function skip(d) {
+  if (!cur || !isFinite(a.duration)) return;
+  a.currentTime = Math.min(Math.max(0, a.currentTime + d), a.duration - 1);
+  record(true);
+}
+function record(force) {
+  if (!cur || pendingSeek !== null) return;
+  const now = Date.now();
+  if (!force && now - lastSave < 5000) return;
+  lastSave = now;
+  const p = state.prog[cur] = state.prog[cur] || {};
+  p.t = a.currentTime;
+  if (isFinite(a.duration)) p.d = a.duration;
+  p.at = now;
+  if (p.d && p.t > p.d - 20) { p.done = true; }
+  save();
+}
+
+a.addEventListener("loadedmetadata", () => {
+  $("seek").max = Math.floor(a.duration);
+  if (pendingSeek) a.currentTime = Math.min(pendingSeek, a.duration - 2);
+  pendingSeek = null;
+  a.playbackRate = state.rate;
+});
+a.addEventListener("timeupdate", () => {
+  if (pendingSeek !== null) return;
+  if (!seeking) {
+    $("seek").value = a.currentTime;
+    $("cur").textContent = fmt(a.currentTime);
+    $("rem").textContent = "-" + fmt((a.duration || 0) - a.currentTime);
+  }
+  record(false);
+  if (sleepAt > 0 && Date.now() >= sleepAt) { a.pause(); setSleep(0); }
+});
+a.addEventListener("play", () => { $("play").textContent = "❚❚"; $("play").setAttribute("aria-label", "暂停"); showMsg(""); });
+a.addEventListener("pause", () => { $("play").textContent = "▶"; $("play").setAttribute("aria-label", "播放"); record(true); render(); });
+a.addEventListener("ended", () => {
+  const p = state.prog[cur] = state.prog[cur] || {};
+  p.done = true; p.t = 0; save(); render();
+  if (SLEEPS[sleepIdx] === -1) setSleep(0);
+});
+a.addEventListener("error", () => {
+  if (!cur) return;
+  showMsg("音频加载失败：可能是网络问题，也可能是小宇宙拦了这个请求");
+});
+a.addEventListener("waiting", () => { if (!a.paused) showMsg("缓冲中…"); });
+a.addEventListener("playing", () => showMsg(""));
+
+// ----- 控件 -----
+$("play").onclick = toggle;
+$("back").onclick = () => skip(-SKIP);
+$("fwd").onclick = () => skip(SKIP);
+$("rate").onclick = () => {
+  const i = RATES.indexOf(state.rate);
+  state.rate = RATES[(i + 1) % RATES.length];
+  a.playbackRate = state.rate;
+  $("rate").textContent = rateLabel(state.rate);
+  $("rate").classList.toggle("on", state.rate !== 1);
+  save();
+};
+function setSleep(i) {
+  sleepIdx = i;
+  const v = SLEEPS[i];
+  sleepAt = v > 0 ? Date.now() + v * 60000 : 0;
+  $("sleep").textContent = v === 0 ? "定时" : v === -1 ? "本集完" : v + "分";
+  $("sleep").classList.toggle("on", v !== 0);
+}
+$("sleep").onclick = () => setSleep((sleepIdx + 1) % SLEEPS.length);
+const seek = $("seek");
+seek.addEventListener("input", () => { seeking = true; $("cur").textContent = fmt(seek.value); });
+seek.addEventListener("change", () => {
+  seeking = false;
+  if (pendingSeek !== null) { pendingSeek = Number(seek.value); return; }
+  a.currentTime = Number(seek.value);
+  record(true);
+});
+
+if ("mediaSession" in navigator) {
+  const ms = navigator.mediaSession;
+  const set = (k, f) => { try { ms.setActionHandler(k, f); } catch (e) {} };
+  set("play", () => a.play());
+  set("pause", () => a.pause());
+  set("seekbackward", () => skip(-SKIP));
+  set("seekforward", () => skip(SKIP));
+  set("seekto", d => { if (d && d.seekTime != null) { a.currentTime = d.seekTime; record(true); } });
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden) record(true); });
+window.addEventListener("pagehide", () => record(true));
+
+// ----- 启动 -----
+$("rate").textContent = rateLabel(state.rate);
+$("rate").classList.toggle("on", state.rate !== 1);
+render();
+if (state.last && EPS[state.last]) load(state.last, false);
+</script>
+</body>
+</html>
