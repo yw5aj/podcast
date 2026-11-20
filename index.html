@@ -4,75 +4,121 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#14181a">
+<meta name="theme-color" content="#171c2b" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#eef0f5" media="(prefers-color-scheme: light)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>我的播客</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
 <style>
+  /* 夜里的收音机：深蓝底，琥珀色只用来表示"进度"和"正在放"。 */
   :root {
-    --bg: #14181a; --panel: #1d2326; --line: #2c3438; --text: #e8ecea;
-    --dim: #8d9a96; --accent: #9cc3b0; --accent-ink: #10201a; --warn: #e8a08a;
+    --bg: #171c2b; --surface: #20273b; --line: #2e3650; --ink: #eceef4; --dim: #8e96ab;
+    --amber: #f0b54a; --amber-ink: #2a1e05; --warn: #ef9a84;
+    --tile-s: 30%; --tile-l: 27%; --glyph-s: 50%; --glyph-l: 84%;
+    --serif: "Noto Serif SC", "Songti SC", "Source Han Serif SC", "SimSun", serif;
+    --sans: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #eef0f5; --surface: #ffffff; --line: #d5d9e4; --ink: #1a2238; --dim: #636c84;
+      --amber: #b8730a; --amber-ink: #fff8ea; --warn: #b3422a;
+      --tile-s: 34%; --tile-l: 82%; --glyph-s: 40%; --glyph-l: 27%;
+    }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; background: var(--bg); color: var(--text);
-    font: 16px/1.5 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif; }
-  header { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 12px 0;
-    border-bottom: 1px solid var(--line); }
-  .hin { max-width: 720px; margin: 0 auto; }
-  #q { width: 100%; background: var(--panel); border: 1px solid var(--line); color: var(--text);
-    font: inherit; font-size: 15px; padding: 9px 12px; border-radius: 10px; }
-  #q::placeholder { color: var(--dim); }
-  #tabs { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-  #tabs::-webkit-scrollbar { display: none; }
-  #tabs button { flex: none; background: var(--panel); color: var(--dim); border: 0; font: inherit;
-    font-size: 14px; padding: 6px 13px; border-radius: 16px; cursor: pointer; white-space: nowrap; }
-  #tabs button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-  main { padding: 10px 12px 250px; max-width: 720px; margin: 0 auto; }
-  .note { color: var(--dim); font-size: 13.5px; padding: 14px 4px; }
-  .ep { display: flex; align-items: stretch; background: var(--panel); border-radius: 12px;
-    margin-bottom: 8px; overflow: hidden; position: relative; }
-  .ep.now { outline: 1.5px solid var(--accent); }
-  .ep button.main { flex: 1; min-width: 0; text-align: left; background: none; border: 0; color: inherit;
-    font: inherit; padding: 12px 6px 14px 14px; cursor: pointer; }
-  .ep .t { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
-  .ep.done .t { color: var(--dim); }
-  .ep .m { font-size: 12.5px; color: var(--dim); margin-top: 3px; font-variant-numeric: tabular-nums; }
-  .ep .bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); }
-  .ep button.chk { width: 48px; background: none; border: 0; color: var(--dim); font-size: 18px; cursor: pointer; }
-  .ep.done button.chk { color: var(--accent); }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 
-  #player { position: fixed; left: 0; right: 0; bottom: 0; background: #191e21; border-top: 1px solid var(--line);
-    padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); z-index: 6; }
-  #player .in { max-width: 720px; margin: 0 auto; }
-  #pTitle { font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 16px 8px; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  #q { width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+    color: var(--ink); font: 16px var(--sans); padding: 8px 0; }
+  #q::placeholder { color: var(--dim); }
+  #q:focus { outline: none; border-bottom-color: var(--amber); }
+  #showbar { display: none; }
+  #back2 { color: var(--dim); font-size: 14px; padding: 8px 12px 8px 0; }
+  body.inshow #q { display: none; }
+  body.inshow #showbar { display: block; }
+
+  main { padding: 8px 16px 230px; max-width: 672px; margin: 0 auto; }
+  .note { color: var(--dim); font-size: 14px; padding: 16px 0; }
+
+  /* 节目架：封面就是主角 */
+  .shelf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 14px; padding-top: 10px;
+    align-items: start; }
+  @media (min-width: 560px) { .shelf { grid-template-columns: repeat(4, 1fr); } }
+  .tile { position: relative; text-align: left; display: block; min-width: 0; }
+  .tile.off { opacity: .38; }
+  .cover { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1;
+    border-radius: 10px; object-fit: cover;
+    background: hsl(var(--h, 220) var(--tile-s) var(--tile-l));
+    color: hsl(var(--h, 220) var(--glyph-s) var(--glyph-l));
+    font: 700 clamp(34px, 13vw, 58px)/1 var(--serif); }
+  .tile .name { font: 500 14px/1.35 var(--serif); margin-top: 7px; overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .tile .sub { font-size: 12px; color: var(--dim); margin-top: 1px; }
+  .badge { position: absolute; top: -6px; right: -6px; min-width: 22px; height: 22px; padding: 0 6px;
+    border-radius: 11px; background: var(--amber); color: var(--amber-ink);
+    font: 700 12px/22px var(--sans); text-align: center; font-variant-numeric: tabular-nums; }
+  .tile .flag { position: absolute; left: 6px; bottom: 6px; font-size: 12px; padding: 2px 8px; border-radius: 10px;
+    background: var(--bg); color: var(--ink); }
+  .tile .box { position: relative; }
+  #manage { display: block; margin: 26px 0 0; color: var(--dim); font-size: 14px; padding: 8px 0;
+    text-decoration: underline; text-underline-offset: 3px; }
+  .lead { font-size: 14px; color: var(--dim); margin: 30px 0 2px; }
+
+  /* 节目页抬头 */
+  .showhead { display: flex; gap: 14px; align-items: center; padding: 4px 0 14px; }
+  .showhead .cover { width: 72px; flex: none; font-size: 34px; }
+  .showhead h1 { font: 700 22px/1.3 var(--serif); margin: 0; }
+  .showhead p { margin: 3px 0 0; font-size: 13px; color: var(--dim); }
+
+  /* 单集：一行一集，用线分开，不用卡片 */
+  .ep { display: flex; align-items: stretch; position: relative; border-top: 1px solid var(--line); }
+  .ep .main { flex: 1; min-width: 0; text-align: left; padding: 13px 4px 15px 0; }
+  .ep .t { font: 500 16px/1.45 var(--serif); overflow-wrap: anywhere; }
+  .ep .m { font-size: 12.5px; color: var(--dim); margin-top: 4px; font-variant-numeric: tabular-nums;
+    display: flex; flex-wrap: wrap; gap: 0 12px; }
+  .ep .m .at { color: var(--amber); }
+  .ep.done .t { color: var(--dim); }
+  .ep.now .t { color: var(--amber); }
+  .ep .bar { position: absolute; left: 0; top: -1px; height: 2px; background: var(--amber); }
+  .ep .chk { flex: none; width: 44px; color: var(--dim); font-size: 17px; }
+  .ep.done .chk { color: var(--amber); }
+
+  /* 播放器 */
+  #player { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface);
+    border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); z-index: 6; }
+  #pTitle { font: 500 15px/1.4 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #pShow { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #msg { font-size: 12.5px; color: var(--warn); margin-top: 4px; display: none; }
-  #seek { width: 100%; margin: 10px 0 2px; accent-color: var(--accent); height: 24px; }
+  #seek { width: 100%; margin: 8px 0 0; accent-color: var(--amber); height: 24px; }
   .times { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim);
     font-variant-numeric: tabular-nums; }
-  .ctl { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
-  .ctl button { background: none; border: 0; color: var(--text); font: inherit; cursor: pointer;
-    min-width: 52px; height: 48px; border-radius: 24px; font-size: 14px; font-variant-numeric: tabular-nums; }
-  .ctl button.sm { color: var(--dim); font-size: 13px; }
-  .ctl button.sm.on { color: var(--accent); }
-  .ctl button.skip { font-size: 15px; font-weight: 600; }
-  #play { background: var(--accent); color: var(--accent-ink); width: 60px; height: 60px; border-radius: 30px;
-    font-size: 24px; }
-  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ctl { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .ctl button { min-width: 52px; height: 48px; border-radius: 24px; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .ctl .sm { color: var(--dim); font-size: 13px; }
+  .ctl .sm.on { color: var(--amber); }
+  .ctl .skip { font-size: 15px; font-weight: 600; }
+  #play { background: var(--amber); color: var(--amber-ink); width: 58px; height: 58px; border-radius: 29px; font-size: 22px; }
 </style>
 </head>
 <body>
 <header>
-  <div class="hin">
-    <input id="q" type="search" placeholder="搜索标题或嘉宾" aria-label="搜索单集" autocomplete="off">
-    <div id="tabs" role="tablist"></div>
+  <div class="wrap">
+    <input id="q" type="search" placeholder="搜索单集标题或嘉宾" aria-label="搜索单集" autocomplete="off">
+    <div id="showbar"><button id="back2">‹ 全部节目</button></div>
   </div>
 </header>
 <main id="list"><div class="note">正在加载节目…</div></main>
 
 <div id="player">
-  <div class="in">
-    <div id="pTitle">还没有在播放的节目</div>
+  <div class="wrap">
+    <div id="pTitle">选一集开始听</div>
     <div id="pShow">&nbsp;</div>
     <div id="msg"></div>
     <input id="seek" type="range" min="0" max="1" step="1" value="0" aria-label="播放进度" disabled>
@@ -89,12 +135,12 @@
 <audio id="a" preload="metadata"></audio>
 
 <script>
-// 节目数据在 shows.json 里，由每日定时任务更新；本页只负责播放和记进度。
+// 节目数据在 shows.json 里，由定时任务更新；本页只负责播放和记进度。
+// 首页是节目架；点进节目看单集（地址栏 #s-<节目id>，手机返回键可回首页）。
 const SKIP = 15;
 const RATES = [0.8, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
 const SLEEPS = [0, 15, 30, 60, -1]; // 分钟；-1 = 本集结束
 const KEY = "xyzplayer.v1";
-const NOW = "__now";
 
 const $ = id => document.getElementById(id);
 const a = $("a");
@@ -102,12 +148,13 @@ let SHOWS = [];
 const EPS = {};
 
 // ----- 存储（只在当前浏览器里）-----
-let state = { prog: {}, rate: 1, last: null, tab: null };
+let state = { prog: {}, rate: 1, last: null, hidden: {} };
 let storageOK = true;
 try {
   const raw = localStorage.getItem(KEY);
   if (raw) state = Object.assign(state, JSON.parse(raw));
 } catch (e) { storageOK = false; }
+if (!state.hidden) state.hidden = {};
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOK = false; }
 }
@@ -119,54 +166,41 @@ let sleepIdx = 0, sleepAt = 0;
 let lastSave = 0;
 let query = "";
 let loadErr = "";
+let managing = false;
 
 function fmt(s) {
   s = Math.max(0, Math.floor(s || 0));
   const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
   return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(ss).padStart(2, "0");
 }
-
-// ----- 标签 -----
-function renderTabs() {
-  const tabs = $("tabs");
-  tabs.textContent = "";
-  const items = [{ id: NOW, title: "在听" }].concat(SHOWS);
-  items.forEach(s => {
-    const b = document.createElement("button");
-    b.textContent = s.title;
-    b.setAttribute("role", "tab");
-    if (!query && s.id === state.tab) b.className = "on";
-    b.onclick = () => {
-      state.tab = s.id; save();
-      query = ""; $("q").value = "";
-      renderTabs(); render();
-      window.scrollTo(0, 0);
-    };
-    tabs.appendChild(b);
-  });
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function viewShow() {
+  const m = /^#s-([0-9a-f]{24})$/.exec(location.hash);
+  return m ? SHOWS.find(s => s.id === m[1]) || null : null;
+}
+function unheardOf(s) {
+  return s.episodes.filter(e => e.audio && !(state.prog[e.id] || {}).done).length;
 }
 
-// ----- 列表 -----
+// ----- 单集行 -----
 function row(e, withShow) {
   const p = state.prog[e.id] || {};
-  const r = document.createElement("div");
-  r.className = "ep" + (p.done ? " done" : "") + (e.id === cur ? " now" : "");
-  const b = document.createElement("button");
-  b.className = "main";
-  const t = document.createElement("div"); t.className = "t"; t.textContent = e.title;
-  const m = document.createElement("div"); m.className = "m";
-  const parts = [];
-  if (withShow) parts.push(e.show);
-  if (e.date) parts.push(e.date);
-  parts.push(e.min + " 分钟");
-  if (p.done) parts.push("已听完");
-  else if (p.t > 5) parts.push("听到 " + fmt(p.t));
-  m.textContent = parts.join(" · ");
-  b.append(t, m);
+  const r = el("div", "ep" + (p.done ? " done" : "") + (e.id === cur ? " now" : ""));
+  const b = el("button", "main");
+  const m = el("div", "m");
+  if (withShow) m.appendChild(el("span", null, e.show));
+  if (e.date) m.appendChild(el("span", null, e.date));
+  m.appendChild(el("span", null, e.min + " 分钟"));
+  if (p.done) m.appendChild(el("span", null, "已听完"));
+  else if (p.t > 5) m.appendChild(el("span", "at", "听到 " + fmt(p.t)));
+  b.append(el("div", "t", e.title), m);
   b.onclick = () => play(e.id);
-  const c = document.createElement("button");
-  c.className = "chk";
-  c.textContent = p.done ? "✓" : "○";
+  const c = el("button", "chk", p.done ? "✓" : "○");
   c.setAttribute("aria-label", p.done ? "标为未听" : "标为已听");
   c.onclick = () => {
     const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
@@ -176,46 +210,106 @@ function row(e, withShow) {
   };
   r.append(b, c);
   if (!p.done && p.t > 5) {
-    const d = p.d || e.min * 60;
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    bar.style.width = Math.min(100, p.t / d * 100) + "%";
+    const bar = el("div", "bar");
+    bar.style.width = Math.min(100, p.t / (p.d || e.min * 60) * 100) + "%";
     r.appendChild(bar);
   }
   return r;
 }
-function note(text) {
-  const n = document.createElement("div");
-  n.className = "note"; n.textContent = text;
-  return n;
+
+// ----- 封面：有图用图，没有就用节目名的第一个字 -----
+function cover(s) {
+  const hue = parseInt(s.id.slice(-6), 16) % 360;
+  const glyph = () => {
+    const d = el("div", "cover", s.title.trim().charAt(0));
+    d.style.setProperty("--h", hue);
+    d.setAttribute("aria-hidden", "true");
+    return d;
+  };
+  if (!s.cover) return glyph();
+  const img = el("img", "cover");
+  img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer";
+  img.style.setProperty("--h", hue);
+  img.onerror = () => img.replaceWith(glyph());
+  img.src = s.cover;
+  return img;
 }
+function tile(s) {
+  const hidden = !!state.hidden[s.id];
+  const playable = s.episodes.some(e => e.audio);
+  const unheard = unheardOf(s);
+  const b = el("button", "tile" + (hidden ? " off" : ""));
+  const box = el("div", "box");
+  box.appendChild(cover(s));
+  if (managing) box.appendChild(el("span", "flag", hidden ? "已隐藏" : "显示中"));
+  else if (unheard) {
+    const badge = el("span", "badge", String(unheard));
+    badge.setAttribute("aria-label", unheard + " 集未听");
+    box.appendChild(badge);
+  }
+  b.append(box, el("div", "name", s.title));
+  if (!playable) b.appendChild(el("div", "sub", "单集补充中"));
+  b.onclick = managing
+    ? () => { if (hidden) delete state.hidden[s.id]; else state.hidden[s.id] = true; save(); render(); }
+    : () => { location.hash = "s-" + s.id; };
+  return b;
+}
+
+// ----- 渲染 -----
 function render() {
   const list = $("list");
+  const show = viewShow();
+  document.body.classList.toggle("inshow", !!show);
   list.textContent = "";
-  if (loadErr) { list.appendChild(note(loadErr)); return; }
-  if (!storageOK) list.appendChild(note("注意：这个浏览器不让保存数据，关掉页面后进度会丢。"));
+  if (loadErr) { list.appendChild(el("div", "note", loadErr)); return; }
+  if (!storageOK) list.appendChild(el("div", "note", "这个浏览器不让保存数据，关掉页面后进度会丢。"));
   const playable = Object.values(EPS);
+
+  if (show) {
+    const ok = show.episodes.filter(e => e.audio);
+    const missing = show.episodes.length - ok.length;
+    const unheard = unheardOf(show);
+    const head = el("div", "showhead");
+    const txt = el("div");
+    txt.append(el("h1", null, show.title),
+      el("p", null, !ok.length ? "单集补充中" : unheard ? unheard + " 集未听，共 " + ok.length + " 集" : "共 " + ok.length + " 集，都听完了"));
+    head.append(cover(show), txt);
+    list.appendChild(head);
+    if (!ok.length) list.appendChild(el("div", "note", "这档节目的单集还没抓到，下次更新后会出现。"));
+    ok.forEach(e => list.appendChild(row(EPS[e.id], false)));
+    if (ok.length && missing) list.appendChild(el("div", "note", "还有 " + missing + " 集的音频没抓到，下次更新后会出现。"));
+    return;
+  }
+
   if (query) {
     const q = query.toLowerCase();
     const hits = playable.filter(e => (e.title + " " + e.show).toLowerCase().includes(q));
-    if (!hits.length) list.appendChild(note("没有找到包含“" + query + "”的单集。"));
+    if (!hits.length) list.appendChild(el("div", "note", "没有标题里带“" + query + "”的单集。"));
     hits.forEach(e => list.appendChild(row(e, true)));
     return;
   }
-  if (state.tab === NOW) {
-    const going = playable.filter(e => { const p = state.prog[e.id]; return p && !p.done && p.t > 5; })
-      .sort((x, y) => (state.prog[y.id].at || 0) - (state.prog[x.id].at || 0));
-    if (!going.length) list.appendChild(note("还没有听到一半的节目。从上面选一档节目开始听。"));
-    going.forEach(e => list.appendChild(row(e, true)));
-    return;
+
+  const visible = SHOWS.filter(s => managing || !state.hidden[s.id]);
+  if (managing) list.appendChild(el("div", "note", "点一下封面，选择这台手机上要不要显示它。"));
+  if (!visible.length) list.appendChild(el("div", "note", "节目都被隐藏了。点“管理节目”把想听的显示出来。"));
+  const shelf = el("div", "shelf");
+  visible.forEach(s => shelf.appendChild(tile(s)));
+  list.appendChild(shelf);
+
+  if (!managing) {
+    const going = playable.filter(e => {
+      const p = state.prog[e.id]; return e.id !== cur && p && !p.done && p.t > 5;
+    }).sort((x, y) => (state.prog[y.id].at || 0) - (state.prog[x.id].at || 0)).slice(0, 5);
+    if (going.length) {
+      list.appendChild(el("div", "lead", "听到一半的"));
+      going.forEach(e => list.appendChild(row(e, true)));
+    }
   }
-  const s = SHOWS.find(x => x.id === state.tab);
-  if (!s) return;
-  const ok = s.episodes.filter(e => e.audio);
-  const missing = s.episodes.length - ok.length;
-  if (!ok.length) list.appendChild(note("这档节目的单集还在补充中，下次更新后就会出现。"));
-  ok.forEach(e => list.appendChild(row(EPS[e.id], false)));
-  if (ok.length && missing) list.appendChild(note("另有 " + missing + " 集的音频还在补充中。"));
+  const hiddenCount = SHOWS.filter(s => state.hidden[s.id]).length;
+  const mb = el("button", null, managing ? "完成" : (hiddenCount ? "管理节目（隐藏了 " + hiddenCount + " 档）" : "管理节目"));
+  mb.id = "manage";
+  mb.onclick = () => { managing = !managing; render(); };
+  list.appendChild(mb);
 }
 
 // ----- 播放 -----
@@ -240,10 +334,14 @@ function load(id, autoplay) {
   $("cur").textContent = fmt(pendingSeek);
   $("rem").textContent = "-" + fmt(($("seek").max) - pendingSeek);
   if ("mediaSession" in navigator) {
-    try { navigator.mediaSession.metadata = new MediaMetadata({ title: e.title, artist: e.show }); } catch (err) {}
+    try {
+      const meta = { title: e.title, artist: e.show };
+      if (e.cover) meta.artwork = [{ src: e.cover }];
+      navigator.mediaSession.metadata = new MediaMetadata(meta);
+    } catch (err) {}
   }
   render();
-  if (autoplay) a.play().catch(() => showMsg("没能开始播放，再点一次播放键试试"));
+  if (autoplay) a.play().catch(() => showMsg("没能开始播放，再点一次播放键。"));
 }
 function play(id) {
   if (id === cur) { toggle(); return; }
@@ -251,7 +349,7 @@ function play(id) {
 }
 function toggle() {
   if (!cur) return;
-  if (a.paused) a.play().catch(() => showMsg("没能开始播放，再点一次播放键试试"));
+  if (a.paused) a.play().catch(() => showMsg("没能开始播放，再点一次播放键。"));
   else a.pause();
 }
 function skip(d) {
@@ -297,7 +395,7 @@ a.addEventListener("ended", () => {
 });
 a.addEventListener("error", () => {
   if (!cur) return;
-  showMsg("这一集的音频加载失败：可能是网络问题，也可能是音频地址有误");
+  showMsg("这一集放不出来。先检查网络；网络没问题的话，是这一集的音频地址有误。");
 });
 a.addEventListener("waiting", () => { if (!a.paused) showMsg("缓冲中…"); });
 a.addEventListener("playing", () => showMsg(""));
@@ -332,7 +430,9 @@ seek.addEventListener("change", () => {
   a.currentTime = Number(seek.value);
   record(true);
 });
-$("q").addEventListener("input", () => { query = $("q").value.trim(); renderTabs(); render(); });
+$("q").addEventListener("input", () => { query = $("q").value.trim(); managing = false; render(); });
+$("back2").onclick = () => { location.hash = ""; };
+window.addEventListener("hashchange", () => { managing = false; render(); window.scrollTo(0, 0); });
 
 if ("mediaSession" in navigator) {
   const ms = navigator.mediaSession;
@@ -353,13 +453,12 @@ fetch("shows.json?t=" + Date.now())
   .then(j => {
     SHOWS = j.shows || [];
     SHOWS.forEach(s => s.episodes.forEach(e => {
-      if (e.audio) EPS[e.id] = Object.assign({ show: s.title }, e);
+      if (e.audio) EPS[e.id] = Object.assign({ show: s.title, cover: s.cover || null }, e);
     }));
-    if (state.tab !== NOW && !SHOWS.some(s => s.id === state.tab)) state.tab = SHOWS.length ? SHOWS[0].id : NOW;
-    renderTabs(); render();
+    render();
     if (state.last && EPS[state.last]) load(state.last, false);
   })
-  .catch(() => { loadErr = "节目列表没加载出来，检查一下网络后刷新页面。"; render(); });
+  .catch(() => { loadErr = "节目列表没加载出来。检查网络后刷新页面。"; render(); });
 </script>
 </body>
 </html>
