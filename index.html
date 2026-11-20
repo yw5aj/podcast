@@ -98,7 +98,12 @@
   .ep .add { flex: none; width: 40px; color: var(--dim); font-size: 22px; line-height: 1; }
   .ep .add.in { color: var(--amber); }
   .ep .ord { flex: none; width: 38px; color: var(--dim); font-size: 17px; }
-  .ep .ord:disabled { opacity: .25; }
+  .ep .grip { flex: none; width: 46px; color: var(--dim); font-size: 20px; touch-action: none; cursor: grab; }
+  .ep.shift { transition: transform .16s ease; }
+  .ep.drag { z-index: 3; background: var(--surface); border-top-color: transparent; border-radius: 10px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .35); transition: none; }
+  .ep.drag .grip { color: var(--amber); cursor: grabbing; }
+  @media (prefers-reduced-motion: reduce) { .ep.shift { transition: none; } }
   .ep .num { flex: none; width: 26px; padding-top: 14px; color: var(--dim); font: 500 15px/1.45 var(--serif);
     font-variant-numeric: tabular-nums; }
   .ep.now .num { color: var(--amber); }
@@ -259,7 +264,60 @@ function row(e, withShow) {
   return r;
 }
 
-// ----- 播放列表里的一行：序号、标题、上移、下移、移除 -----
+// ----- 拖动排序：按住手柄上下拖，松手落位 -----
+function startDrag(ev, i, grip) {
+  if (ev.button > 0) return;
+  ev.preventDefault();
+  const rows = [...document.querySelectorAll("#list .ep")];
+  const me = rows[i];
+  const rects = rows.map(r => { const b = r.getBoundingClientRect(); return { top: b.top + scrollY, h: b.height }; });
+  const startY = ev.clientY + scrollY;
+  let to = i, lastY = ev.clientY;
+  me.classList.add("drag");
+  try { grip.setPointerCapture(ev.pointerId); } catch (e) {}
+  const place = () => {
+    const dy = lastY + scrollY - startY;
+    me.style.transform = "translateY(" + dy + "px)";
+    const c = rects[i].top + rects[i].h / 2 + dy;
+    let n = i;
+    rows.forEach((r, j) => {
+      if (j === i) return;
+      const cj = rects[j].top + rects[j].h / 2;
+      let shift = 0;
+      if (j < i && c < cj) { shift = rects[i].h; n--; }
+      else if (j > i && c > cj) { shift = -rects[i].h; n++; }
+      r.classList.add("shift");
+      r.style.transform = shift ? "translateY(" + shift + "px)" : "";
+    });
+    to = n;
+  };
+  // 拖到屏幕上下边缘时自动滚动
+  const timer = setInterval(() => {
+    const bottom = innerHeight - $("player").offsetHeight;
+    if (lastY < 90) scrollBy(0, -10);
+    else if (lastY > bottom - 40) scrollBy(0, 10);
+    else return;
+    place();
+  }, 16);
+  const move = e => { lastY = e.clientY; place(); };
+  const end = () => {
+    clearInterval(timer);
+    grip.removeEventListener("pointermove", move);
+    grip.removeEventListener("pointerup", end);
+    grip.removeEventListener("pointercancel", end);
+    if (to !== i) {
+      const [x] = state.queue.splice(i, 1);
+      state.queue.splice(to, 0, x);
+      save();
+    }
+    render();
+  };
+  grip.addEventListener("pointermove", move);
+  grip.addEventListener("pointerup", end);
+  grip.addEventListener("pointercancel", end);
+}
+
+// ----- 播放列表里的一行：序号、标题、拖动手柄、移除 -----
 function queueRow(e, i, n) {
   const p = state.prog[e.id] || {};
   const r = el("div", "ep" + (e.id === cur ? " now" : ""));
@@ -269,13 +327,20 @@ function queueRow(e, i, n) {
   if (!p.done && p.t > 5) m.appendChild(el("span", "at", "听到 " + fmt(p.t)));
   b.append(el("div", "t", e.title), m);
   b.onclick = () => play(e.id);
-  const up = el("button", "ord", "↑"), down = el("button", "ord", "↓"), rm = el("button", "ord", "×");
-  up.setAttribute("aria-label", "上移"); down.setAttribute("aria-label", "下移"); rm.setAttribute("aria-label", "从播放列表移除");
-  up.disabled = i === 0; down.disabled = i === n - 1;
-  up.onclick = () => moveQueue(i, -1);
-  down.onclick = () => moveQueue(i, 1);
+  const grip = el("button", "grip", "≡"), rm = el("button", "ord", "×");
+  grip.setAttribute("aria-label", "拖动调整顺序，或用上下方向键");
+  rm.setAttribute("aria-label", "从播放列表移除");
+  grip.addEventListener("pointerdown", ev => startDrag(ev, i, grip));
+  grip.addEventListener("keydown", ev => {
+    const d = ev.key === "ArrowUp" ? -1 : ev.key === "ArrowDown" ? 1 : 0;
+    if (!d || i + d < 0 || i + d >= n) return;
+    ev.preventDefault();
+    moveQueue(i, d);
+    const g = document.querySelectorAll("#list .grip")[i + d];
+    if (g) g.focus();
+  });
   rm.onclick = () => toggleQueue(e.id);
-  r.append(el("div", "num", String(i + 1)), b, up, down, rm);
+  r.append(el("div", "num", String(i + 1)), b, grip, rm);
   return r;
 }
 
