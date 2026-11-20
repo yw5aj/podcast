@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  /* 夜里的收音机：深蓝底，琥珀色只用来表示"进度"和"正在放"。 */
+  /* 夜里的收音机：深蓝底。琥珀色只表示"进度"和"正在放"，别的地方不用。 */
   :root {
     --bg: #171c2b; --surface: #20273b; --line: #2e3650; --ink: #eceef4; --dim: #8e96ab;
     --amber: #f0b54a; --amber-ink: #2a1e05; --warn: #ef9a84;
@@ -24,7 +24,7 @@
   @media (prefers-color-scheme: light) {
     :root {
       --bg: #eef0f5; --surface: #ffffff; --line: #d5d9e4; --ink: #1a2238; --dim: #636c84;
-      --amber: #b8730a; --amber-ink: #fff8ea; --warn: #b3422a;
+      --amber: #96590a; --amber-ink: #fff8ea; --warn: #b3422a;
       --tile-s: 34%; --tile-l: 82%; --glyph-s: 40%; --glyph-l: 27%;
     }
   }
@@ -35,56 +35,52 @@
 
   header { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 16px 8px; }
   .wrap { max-width: 640px; margin: 0 auto; }
-  #q { width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
+  .topbar { display: flex; align-items: center; gap: 14px; }
+  #q { flex: 1; min-width: 0; background: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0;
     color: var(--ink); font: 16px var(--sans); padding: 8px 0; }
   #q::placeholder { color: var(--dim); }
   #q:focus { outline: none; border-bottom-color: var(--amber); }
-  .topbar { display: flex; align-items: center; gap: 14px; }
-  .topbar #q { flex: 1; min-width: 0; }
   #qbtn { flex: none; font-size: 14px; white-space: nowrap; border: 1px solid var(--line); border-radius: 16px;
     padding: 6px 12px; }
-  #qbtn b { color: var(--amber); font-variant-numeric: tabular-nums; }
+  #qbtn b { font-variant-numeric: tabular-nums; }
   #showbar { display: none; }
   #back2 { color: var(--dim); font-size: 14px; padding: 8px 12px 8px 0; }
   body.inshow .topbar { display: none; }
   body.inshow #showbar { display: block; }
 
-  main { padding: 8px 16px 230px; max-width: 672px; margin: 0 auto; }
-  .note { color: var(--dim); font-size: 14px; padding: 16px 0; }
+  main { padding: 8px 16px 270px; max-width: 672px; margin: 0 auto; }
+  .note { color: var(--dim); font-size: 14px; padding: 14px 0; }
+  .lead { font-size: 14px; color: var(--dim); margin: 26px 0 2px; }
 
-  /* 节目架：封面就是主角 */
-  .shelf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 14px; padding-top: 10px;
-    align-items: start; }
-  @media (min-width: 560px) { .shelf { grid-template-columns: repeat(4, 1fr); } }
-  .tile { position: relative; text-align: left; display: block; min-width: 0; }
-  .tile.off { opacity: .38; }
+  /* 节目：一行五个小封面，只是入口 */
+  .shelf { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px 10px; padding-top: 12px; }
+  @media (min-width: 560px) { .shelf { grid-template-columns: repeat(8, 1fr); } }
+  .tile { position: relative; display: block; min-width: 0; }
   .cover { display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1;
-    border-radius: 10px; object-fit: cover;
+    border-radius: 8px; object-fit: cover;
     background: hsl(var(--h, 220) var(--tile-s) var(--tile-l));
     color: hsl(var(--h, 220) var(--glyph-s) var(--glyph-l));
-    font: 700 clamp(34px, 13vw, 58px)/1 var(--serif); }
-  .tile .name { font: 500 14px/1.35 var(--serif); margin-top: 7px; overflow: hidden;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-  .tile .sub { font-size: 12px; color: var(--dim); margin-top: 1px; }
-  .badge { position: absolute; top: -6px; right: -6px; min-width: 22px; height: 22px; padding: 0 6px;
-    border-radius: 11px; background: var(--amber); color: var(--amber-ink);
-    font: 700 12px/22px var(--sans); text-align: center; font-variant-numeric: tabular-nums; }
-  .tile .flag { position: absolute; left: 6px; bottom: 6px; font-size: 12px; padding: 2px 8px; border-radius: 10px;
-    background: var(--bg); color: var(--ink); }
-  .tile .box { position: relative; }
+    font: 700 clamp(20px, 7vw, 30px)/1 var(--serif); }
+  .badge { position: absolute; top: -5px; right: -5px; min-width: 19px; height: 19px; padding: 0 5px;
+    border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: 0 0 0 2px var(--bg);
+    font: 700 11.5px/19px var(--sans); text-align: center; font-variant-numeric: tabular-nums; }
   #manage { display: block; margin: 26px 0 0; color: var(--dim); font-size: 14px; padding: 8px 0;
     text-decoration: underline; text-underline-offset: 3px; }
-  .lead { font-size: 14px; color: var(--dim); margin: 30px 0 2px; }
+  .mrow { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 9px 0;
+    border-top: 1px solid var(--line); }
+  .mrow .cover { width: 40px; flex: none; font-size: 20px; border-radius: 6px; }
+  .mrow .n { flex: 1; min-width: 0; font: 500 16px/1.4 var(--serif); }
+  .mrow .st { flex: none; font-size: 13px; color: var(--dim); }
+  .mrow.off .cover, .mrow.off .n { opacity: .4; }
 
   /* 节目页抬头 */
   .showhead { display: flex; gap: 14px; align-items: center; padding: 4px 0 14px; }
-  .showhead .cover { width: 72px; flex: none; font-size: 34px; }
+  .showhead .cover { width: 72px; flex: none; font-size: 34px; border-radius: 10px; }
   .showhead h1, .qhead h1 { font: 700 22px/1.3 var(--serif); margin: 0; }
+  .showhead p, .qhead p { margin: 3px 0 0; font-size: 13px; color: var(--dim); }
   .qhead { padding: 4px 0 14px; }
-  .qhead p { margin: 3px 0 0; font-size: 13px; color: var(--dim); }
-  .showhead p { margin: 3px 0 0; font-size: 13px; color: var(--dim); }
 
-  /* 单集：一行一集，用线分开，不用卡片 */
+  /* 单集：一行一集，用线分开。标题是主角，两边的按钮退后。 */
   .ep { display: flex; align-items: stretch; position: relative; border-top: 1px solid var(--line); }
   .ep .main { flex: 1; min-width: 0; text-align: left; padding: 13px 4px 15px 0; }
   .ep .t { font: 500 16px/1.45 var(--serif); overflow-wrap: anywhere; }
@@ -93,45 +89,47 @@
   .ep .m .at { color: var(--amber); }
   .ep.done .t { color: var(--dim); }
   .ep.now .t { color: var(--amber); }
-  .ep .bar { position: absolute; left: 0; top: -1px; height: 2px; background: var(--amber); }
-  .ep .chk { flex: none; width: 50px; display: flex; align-items: center; justify-content: flex-start; }
-  .ep .chk::before { content: ""; display: flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; border-radius: 17px; border: 1.5px solid var(--dim); box-sizing: border-box;
-    font: 600 18px/1 var(--sans); }
-  .ep.done .chk::before { content: "✓"; background: var(--line); border-color: var(--line); color: var(--ink); }
-  .ep .add { flex: none; width: 54px; display: flex; align-items: center; justify-content: center; }
-  .ep .add::before { content: "+"; display: flex; align-items: center; justify-content: center;
-    width: 38px; height: 38px; border-radius: 19px; border: 1.5px solid var(--dim); color: var(--ink);
-    font: 400 26px/1 var(--sans); padding-bottom: 2px; box-sizing: border-box; }
-  .ep .add.in::before { content: "−"; background: var(--amber); border-color: var(--amber); color: var(--amber-ink); }
-  .ep .ord { flex: none; width: 38px; color: var(--dim); font-size: 17px; }
-  .ep .grip { flex: none; width: 46px; color: var(--dim); font-size: 20px; touch-action: none; cursor: grab; }
+  .ep .chk { flex: none; width: 38px; display: flex; align-items: flex-start; padding-top: 14px; }
+  .ep .chk svg { display: block; }
+  .ep .add { flex: none; width: 44px; color: var(--dim); font: 400 26px/1 var(--sans); }
+  .ep .add.in { color: var(--amber); font-weight: 600; }
+  .ep .grip { flex: none; width: 38px; color: var(--dim); font-size: 20px; text-align: left; touch-action: none; cursor: grab; }
+  .ep .rm { flex: none; width: 40px; color: var(--dim); font-size: 19px; text-align: right; }
   .ep.shift { transition: transform .16s ease; }
   .ep.drag { z-index: 3; background: var(--surface); border-top-color: transparent; border-radius: 10px;
     box-shadow: 0 8px 22px rgba(0, 0, 0, .35); transition: none; }
-  .ep.drag .grip { color: var(--amber); cursor: grabbing; }
+  .ep.drag .grip { color: var(--ink); cursor: grabbing; }
   @media (prefers-reduced-motion: reduce) { .ep.shift { transition: none; } }
-  .ep .num { flex: none; width: 26px; padding-top: 14px; color: var(--dim); font: 500 15px/1.45 var(--serif);
-    font-variant-numeric: tabular-nums; }
-  .ep.now .num { color: var(--amber); }
   #startq { margin: 2px 0 16px; background: var(--amber); color: var(--amber-ink); font-size: 15px; font-weight: 600;
     padding: 9px 18px; border-radius: 20px; }
 
   /* 播放器 */
   #player { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface);
-    border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); z-index: 6; }
-  #pTitle { font: 500 15px/1.4 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    border-top: 1px solid var(--line); padding: 12px 16px calc(10px + env(safe-area-inset-bottom)); z-index: 6; }
+  #pGo { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; }
+  #pCover { flex: none; width: 46px; }
+  #pCover .cover { font-size: 22px; border-radius: 7px; }
+  #pGo .txt { flex: 1; min-width: 0; }
+  #pTitle { font: 500 15px/1.4 var(--serif); overflow: hidden;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   #pShow { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #msg { font-size: 12.5px; color: var(--warn); margin-top: 4px; display: none; }
+  #msg { font-size: 12.5px; color: var(--warn); margin-top: 6px; display: none; }
   #seek { width: 100%; margin: 8px 0 0; accent-color: var(--amber); height: 24px; }
   .times { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim);
     font-variant-numeric: tabular-nums; }
+  #panel { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: none; }
+  #panel[hidden] { display: none; }
+  #panel::-webkit-scrollbar { display: none; }
+  #panel button { flex: none; min-width: 46px; height: 36px; padding: 0 11px; border-radius: 18px;
+    border: 1px solid var(--line); font-size: 14px; font-variant-numeric: tabular-nums; }
+  #panel button.on { border-color: var(--ink); background: var(--ink); color: var(--bg); font-weight: 600; }
   .ctl { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
-  .ctl button { min-width: 52px; height: 48px; border-radius: 24px; font-size: 14px; font-variant-numeric: tabular-nums; }
-  .ctl .sm { color: var(--dim); font-size: 13px; }
-  .ctl .sm.on { color: var(--amber); }
+  .ctl button { min-width: 56px; height: 48px; border-radius: 24px; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .ctl .sm { color: var(--dim); font-size: 13.5px; }
+  .ctl .sm.on { color: var(--ink); font-weight: 600; }
   .ctl .skip { font-size: 15px; font-weight: 600; }
-  #play { background: var(--amber); color: var(--amber-ink); width: 58px; height: 58px; border-radius: 29px; font-size: 22px; }
+  #play { display: flex; align-items: center; justify-content: center; background: var(--amber); color: var(--amber-ink);
+    width: 58px; min-width: 58px; height: 58px; border-radius: 29px; }
 </style>
 </head>
 <body>
@@ -141,22 +139,25 @@
       <input id="q" type="search" placeholder="搜索单集标题或嘉宾" aria-label="搜索单集" autocomplete="off">
       <button id="qbtn">播放列表</button>
     </div>
-    <div id="showbar"><button id="back2">‹ 全部节目</button></div>
+    <div id="showbar"><button id="back2">‹ 首页</button></div>
   </div>
 </header>
 <main id="list"><div class="note">正在加载节目…</div></main>
 
 <div id="player">
   <div class="wrap">
-    <div id="pTitle">选一集开始听</div>
-    <div id="pShow">&nbsp;</div>
+    <button id="pGo" aria-label="打开这档节目">
+      <div id="pCover"></div>
+      <div class="txt"><div id="pTitle">选一集开始听</div><div id="pShow">&nbsp;</div></div>
+    </button>
     <div id="msg"></div>
     <input id="seek" type="range" min="0" max="1" step="1" value="0" aria-label="播放进度" disabled>
     <div class="times"><span id="cur">0:00</span><span id="rem">0:00</span></div>
+    <div id="panel" hidden></div>
     <div class="ctl">
       <button id="rate" class="sm" aria-label="播放速度">1x</button>
       <button id="back" class="skip" aria-label="后退15秒">−15</button>
-      <button id="play" aria-label="播放">▶</button>
+      <button id="play" aria-label="播放"></button>
       <button id="fwd" class="skip" aria-label="前进15秒">+15</button>
       <button id="sleep" class="sm" aria-label="睡眠定时">定时</button>
     </div>
@@ -165,12 +166,15 @@
 <audio id="a" preload="metadata"></audio>
 
 <script>
-// 节目数据在 shows.json 里，由定时任务更新；本页只负责播放和记进度。
-// 首页是节目架；点进节目看单集（地址栏 #s-<节目id>，手机返回键可回首页）。
+// 节目数据在 shows.json 里，由 GitHub Actions 定时更新；本页只负责播放和记进度。
+// 首页：小封面入口 + 听到一半的 + 新出的。#s-<节目id> 是节目页，#queue 是播放列表。
 const SKIP = 15;
 const RATES = [0.8, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
-const SLEEPS = [0, 15, 30, 60, -1]; // 分钟；-1 = 本集结束
+const SLEEPS = [15, 30, 60, -1]; // 分钟；-1 = 放完这一集
+const NEW_DAYS = 14;             // 多少天内算"新出的"
 const KEY = "xyzplayer.v1";
+const ICON_PLAY = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
 
 const $ = id => document.getElementById(id);
 const a = $("a");
@@ -178,13 +182,14 @@ let SHOWS = [];
 const EPS = {};
 
 // ----- 存储（只在当前浏览器里）-----
-let state = { prog: {}, rate: 1, last: null, hidden: {}, queue: [] };
+let state = { prog: {}, rate: 1, showRate: {}, last: null, hidden: {}, queue: [] };
 let storageOK = true;
 try {
   const raw = localStorage.getItem(KEY);
   if (raw) state = Object.assign(state, JSON.parse(raw));
 } catch (e) { storageOK = false; }
 if (!state.hidden) state.hidden = {};
+if (!state.showRate) state.showRate = {};
 if (!Array.isArray(state.queue)) state.queue = [];
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOK = false; }
@@ -193,28 +198,61 @@ function save() {
 let cur = null;         // 当前单集 id
 let pendingSeek = null; // 元数据加载后要跳到的位置
 let seeking = false;
-let sleepIdx = 0, sleepAt = 0;
+let sleepMode = 0, sleepAt = 0, sleepTick = null; // 0 关；>0 分钟；-1 放完这一集
+let panelKind = null;   // 当前展开的面板："rate" / "sleep" / null
 let lastSave = 0;
 let query = "";
 let loadErr = "";
 let managing = false;
 
-function fmt(s) {
-  s = Math.max(0, Math.floor(s || 0));
-  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
-  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(ss).padStart(2, "0");
-}
+// ----- 小工具 -----
 function el(tag, cls, text) {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
   if (text != null) n.textContent = text;
   return n;
 }
+function clock(s) { // 播放器上的时间码
+  s = Math.max(0, Math.floor(s || 0));
+  const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
+  return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(ss).padStart(2, "0");
+}
+function span(min) { // 259 -> "4 小时 19 分"
+  min = Math.max(1, Math.round(min));
+  const h = Math.floor(min / 60), m = min % 60;
+  return h ? h + " 小时" + (m ? " " + m + " 分" : "") : m + " 分钟";
+}
+function dayNum(d) { const p = d.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5; }
+function today() { return Math.floor((Date.now() + 8 * 36e5) / 864e5); } // 日期按北京时间算
+function ageDays(d) { return d ? today() - dayNum(d) : Infinity; }
+function when(d) { // "3 天前"；两周以上写日期
+  const n = ageDays(d);
+  if (n <= 0) return "今天";
+  if (n === 1) return "昨天";
+  if (n < NEW_DAYS) return n + " 天前";
+  const p = d.split("-");
+  const thisYear = new Date(Date.now() + 8 * 36e5).getUTCFullYear();
+  return (+p[0] === thisYear ? "" : p[0] + "年") + (+p[1]) + "月" + (+p[2]) + "日";
+}
+function rateOf(showId) { return state.showRate[showId] || state.rate || 1; }
+function isDone(id) { return !!(state.prog[id] || {}).done; }
+function midway(id) { // 听到一半：有进度、没听完
+  const p = state.prog[id];
+  return !!p && !p.done && p.t > 5;
+}
+function resumeAt(p) { // 该从哪里接着放；接近结尾或没有进度就从头
+  if (!p || !(p.t > 5)) return 0;
+  if (p.d && p.t > p.d - 20) return 0;
+  return p.t;
+}
+function isNew(e) { return ageDays(e.date) < NEW_DAYS && !isDone(e.id); }
 function viewShow() {
   const m = /^#s-([0-9a-f]{24})$/.exec(location.hash);
   return m ? SHOWS.find(s => s.id === m[1]) || null : null;
 }
 function viewQueue() { return location.hash === "#queue"; }
+
+// ----- 播放列表 -----
 function toggleQueue(id) {
   const i = state.queue.indexOf(id);
   if (i >= 0) state.queue.splice(i, 1); else state.queue.push(id);
@@ -232,41 +270,64 @@ function nextInQueue() {
   const n = i >= 0 ? state.queue[i + 1] : state.queue[0];
   if (n && EPS[n]) load(n, true);
 }
-function unheardOf(s) {
-  return s.episodes.filter(e => e.audio && !(state.prog[e.id] || {}).done).length;
+
+// ----- 进度环：没听是空圈，听到一半是一段琥珀色弧，听完是灰底的勾 -----
+function ring(id) {
+  const p = state.prog[id] || {};
+  const R = 9, C = 2 * Math.PI * R;
+  let inner;
+  if (p.done) {
+    inner = '<circle cx="12" cy="12" r="10" fill="var(--line)"/>' +
+      '<path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+  } else {
+    inner = '<circle cx="12" cy="12" r="' + R + '" fill="none" stroke="var(--dim)" stroke-opacity=".55" stroke-width="1.5"/>';
+    const e = EPS[id];
+    const total = p.d || (e ? e.min * 60 : 0);
+    if (p.t > 5 && total) {
+      const f = Math.min(1, p.t / total);
+      inner += '<circle cx="12" cy="12" r="' + R + '" fill="none" stroke="var(--amber)" stroke-width="2.5" stroke-linecap="round"' +
+        ' stroke-dasharray="' + (C * f).toFixed(2) + ' ' + C.toFixed(2) + '" transform="rotate(-90 12 12)"/>';
+    }
+  }
+  return '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">' + inner + '</svg>';
 }
 
 // ----- 单集行 -----
-function row(e, withShow) {
+function meta(e, withShow) {
   const p = state.prog[e.id] || {};
-  const r = el("div", "ep" + (p.done ? " done" : "") + (e.id === cur ? " now" : ""));
-  const b = el("button", "main");
   const m = el("div", "m");
   if (withShow) m.appendChild(el("span", null, e.show));
-  if (e.date) m.appendChild(el("span", null, e.date));
-  m.appendChild(el("span", null, e.min + " 分钟"));
-  if (p.done) m.appendChild(el("span", null, "已听完"));
-  else if (p.t > 5) m.appendChild(el("span", "at", "听到 " + fmt(p.t)));
-  b.append(el("div", "t", e.title), m);
-  b.onclick = () => play(e.id);
+  if (e.date) m.appendChild(el("span", null, when(e.date)));
+  if (p.done) {
+    m.appendChild(el("span", null, span(e.min)));
+    m.appendChild(el("span", null, "已听完"));
+  } else if (p.t > 5) {
+    const total = p.d || e.min * 60;
+    m.appendChild(el("span", "at", "还剩 " + span((total - p.t) / 60 / rateOf(e.showId))));
+  } else {
+    m.appendChild(el("span", null, span(e.min)));
+  }
+  return m;
+}
+function row(e, withShow) {
+  const done = isDone(e.id);
+  const r = el("div", "ep" + (done ? " done" : "") + (e.id === cur ? " now" : ""));
   const c = el("button", "chk");
-  c.setAttribute("aria-label", p.done ? "标为未听" : "标为已听");
-  c.onclick = () => {
+  c.innerHTML = ring(e.id);
+  c.setAttribute("aria-label", done ? "标为未听" : "标为已听");
+  c.onclick = () => { // 只切换"听过"的标记，不动已经记下的进度
     const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
     q.done = !q.done;
-    if (!q.done) q.t = 0;
     save(); render();
   };
+  const b = el("button", "main");
+  b.append(el("div", "t", e.title), meta(e, withShow));
+  b.onclick = () => play(e.id);
   const inQ = state.queue.includes(e.id);
-  const add = el("button", "add" + (inQ ? " in" : ""));
+  const add = el("button", "add" + (inQ ? " in" : ""), inQ ? "−" : "+");
   add.setAttribute("aria-label", inQ ? "从播放列表移除" : "加入播放列表");
   add.onclick = () => toggleQueue(e.id);
   r.append(c, b, add);
-  if (!p.done && p.t > 5) {
-    const bar = el("div", "bar");
-    bar.style.width = Math.min(100, p.t / (p.d || e.min * 60) * 100) + "%";
-    r.appendChild(bar);
-  }
   return r;
 }
 
@@ -297,8 +358,7 @@ function startDrag(ev, i, grip) {
     });
     to = n;
   };
-  // 拖到屏幕上下边缘时自动滚动
-  const timer = setInterval(() => {
+  const timer = setInterval(() => { // 拖到屏幕上下边缘时自动滚动
     const bottom = innerHeight - $("player").offsetHeight;
     if (lastY < 90) scrollBy(0, -10);
     else if (lastY > bottom - 40) scrollBy(0, 10);
@@ -323,19 +383,11 @@ function startDrag(ev, i, grip) {
   grip.addEventListener("pointercancel", end);
 }
 
-// ----- 播放列表里的一行：序号、标题、拖动手柄、移除 -----
+// ----- 播放列表里的一行：手柄在左，移除在右 -----
 function queueRow(e, i, n) {
-  const p = state.prog[e.id] || {};
   const r = el("div", "ep" + (e.id === cur ? " now" : ""));
-  const b = el("button", "main");
-  const m = el("div", "m");
-  m.append(el("span", null, e.show), el("span", null, e.min + " 分钟"));
-  if (!p.done && p.t > 5) m.appendChild(el("span", "at", "听到 " + fmt(p.t)));
-  b.append(el("div", "t", e.title), m);
-  b.onclick = () => play(e.id);
-  const grip = el("button", "grip", "≡"), rm = el("button", "ord", "×");
+  const grip = el("button", "grip", "≡");
   grip.setAttribute("aria-label", "拖动调整顺序，或用上下方向键");
-  rm.setAttribute("aria-label", "从播放列表移除");
   grip.addEventListener("pointerdown", ev => startDrag(ev, i, grip));
   grip.addEventListener("keydown", ev => {
     const d = ev.key === "ArrowUp" ? -1 : ev.key === "ArrowDown" ? 1 : 0;
@@ -345,8 +397,13 @@ function queueRow(e, i, n) {
     const g = document.querySelectorAll("#list .grip")[i + d];
     if (g) g.focus();
   });
+  const b = el("button", "main");
+  b.append(el("div", "t", e.title), meta(e, true));
+  b.onclick = () => play(e.id);
+  const rm = el("button", "rm", "×");
+  rm.setAttribute("aria-label", "从播放列表移除");
   rm.onclick = () => toggleQueue(e.id);
-  r.append(el("div", "num", String(i + 1)), b, grip, rm);
+  r.append(grip, b, rm);
   return r;
 }
 
@@ -368,23 +425,19 @@ function cover(s) {
   return img;
 }
 function tile(s) {
+  const fresh = s.episodes.filter(e => e.audio && isNew(e)).length;
+  const b = el("button", "tile");
+  b.setAttribute("aria-label", s.title + (fresh ? "，" + fresh + " 集新出的还没听" : ""));
+  b.appendChild(cover(s));
+  if (fresh) b.appendChild(el("span", "badge", String(fresh)));
+  b.onclick = () => { location.hash = "s-" + s.id; };
+  return b;
+}
+function manageRow(s) {
   const hidden = !!state.hidden[s.id];
-  const playable = s.episodes.some(e => e.audio);
-  const unheard = unheardOf(s);
-  const b = el("button", "tile" + (hidden ? " off" : ""));
-  const box = el("div", "box");
-  box.appendChild(cover(s));
-  if (managing) box.appendChild(el("span", "flag", hidden ? "已隐藏" : "显示中"));
-  else if (unheard) {
-    const badge = el("span", "badge", String(unheard));
-    badge.setAttribute("aria-label", unheard + " 集未听");
-    box.appendChild(badge);
-  }
-  b.append(box, el("div", "name", s.title));
-  if (!playable) b.appendChild(el("div", "sub", "单集补充中"));
-  b.onclick = managing
-    ? () => { if (hidden) delete state.hidden[s.id]; else state.hidden[s.id] = true; save(); render(); }
-    : () => { location.hash = "s-" + s.id; };
+  const b = el("button", "mrow" + (hidden ? " off" : ""));
+  b.append(cover(s), el("div", "n", s.title), el("div", "st", hidden ? "已隐藏" : "显示中"));
+  b.onclick = () => { if (hidden) delete state.hidden[s.id]; else state.hidden[s.id] = true; save(); render(); };
   return b;
 }
 
@@ -396,7 +449,7 @@ function render() {
   document.body.classList.toggle("inshow", !!show || inQueue);
   const qb = $("qbtn");
   qb.textContent = "播放列表";
-  if (state.queue.length) { qb.append(" ", el("b", null, String(state.queue.length))); }
+  if (state.queue.length) qb.append(" ", el("b", null, String(state.queue.length)));
   list.textContent = "";
   if (loadErr) { list.appendChild(el("div", "note", loadErr)); return; }
   if (!storageOK) list.appendChild(el("div", "note", "这个浏览器不让保存数据，关掉页面后进度会丢。"));
@@ -405,11 +458,12 @@ function render() {
   if (inQueue) {
     const items = state.queue.map(id => EPS[id]).filter(Boolean);
     const head = el("div", "qhead");
+    const total = items.reduce((n, e) => n + e.min, 0);
     head.append(el("h1", null, "播放列表"),
-      el("p", null, items.length ? items.length + " 集，放完一集自动接着放下一集" : "只存在这台手机上"));
+      el("p", null, items.length ? items.length + " 集，共 " + span(total) + "，放完一集自动接着放下一集" : "只存在这台手机上"));
     list.appendChild(head);
     if (!items.length) {
-      list.appendChild(el("div", "note", "列表还是空的。进任意一档节目，点单集右边的 +，把它加进来。"));
+      list.appendChild(el("div", "note", "列表还是空的。点任意单集右边的 +，把它加进来。"));
       return;
     }
     if (!state.queue.includes(cur)) {
@@ -424,17 +478,15 @@ function render() {
 
   if (show) {
     const ok = show.episodes.filter(e => e.audio);
-    const missing = show.episodes.length - ok.length;
-    const unheard = unheardOf(show);
+    const unheard = ok.filter(e => !isDone(e.id)).length;
     const head = el("div", "showhead");
     const txt = el("div");
     txt.append(el("h1", null, show.title),
-      el("p", null, !ok.length ? "单集补充中" : unheard ? unheard + " 集未听，共 " + ok.length + " 集" : "共 " + ok.length + " 集，都听完了"));
+      el("p", null, !ok.length ? "单集还没抓到" : unheard ? "共 " + ok.length + " 集，" + unheard + " 集没听" : "共 " + ok.length + " 集，都听完了"));
     head.append(cover(show), txt);
     list.appendChild(head);
     if (!ok.length) list.appendChild(el("div", "note", "这档节目的单集还没抓到，下次更新后会出现。"));
     ok.forEach(e => list.appendChild(row(EPS[e.id], false)));
-    if (ok.length && missing) list.appendChild(el("div", "note", "还有 " + missing + " 集的音频没抓到，下次更新后会出现。"));
     return;
   }
 
@@ -446,20 +498,29 @@ function render() {
     return;
   }
 
-  const visible = SHOWS.filter(s => managing || !state.hidden[s.id]);
-  if (managing) list.appendChild(el("div", "note", "点一下封面，选择这台手机上要不要显示它。"));
-  if (!visible.length) list.appendChild(el("div", "note", "节目都被隐藏了。点“管理节目”把想听的显示出来。"));
-  const shelf = el("div", "shelf");
-  visible.forEach(s => shelf.appendChild(tile(s)));
-  list.appendChild(shelf);
+  if (managing) {
+    list.appendChild(el("div", "note", "点一下节目，选择这台手机上要不要显示它。"));
+    SHOWS.forEach(s => list.appendChild(manageRow(s)));
+  } else {
+    const visible = SHOWS.filter(s => !state.hidden[s.id]);
+    if (!visible.length) list.appendChild(el("div", "note", "节目都被隐藏了。点“管理节目”把想听的显示出来。"));
+    const shelf = el("div", "shelf");
+    visible.forEach(s => shelf.appendChild(tile(s)));
+    list.appendChild(shelf);
 
-  if (!managing) {
-    const going = playable.filter(e => {
-      const p = state.prog[e.id]; return e.id !== cur && p && !p.done && p.t > 5;
-    }).sort((x, y) => (state.prog[y.id].at || 0) - (state.prog[x.id].at || 0)).slice(0, 5);
+    const going = playable.filter(e => midway(e.id))
+      .sort((x, y) => (state.prog[y.id].at || 0) - (state.prog[x.id].at || 0)).slice(0, 5);
     if (going.length) {
       list.appendChild(el("div", "lead", "听到一半的"));
       going.forEach(e => list.appendChild(row(e, true)));
+    }
+    const fresh = playable.filter(e => !state.hidden[e.showId] && isNew(e) && !midway(e.id))
+      .sort((x, y) => dayNum(y.date) - dayNum(x.date)).slice(0, 12);
+    if (fresh.length) {
+      list.appendChild(el("div", "lead", "新出的"));
+      fresh.forEach(e => list.appendChild(row(e, true)));
+    } else if (!going.length && visible.length) {
+      list.appendChild(el("div", "note", "最近两周没有新单集。点上面的封面，从节目里挑一集。"));
     }
   }
   const hiddenCount = SHOWS.filter(s => state.hidden[s.id]).length;
@@ -471,6 +532,13 @@ function render() {
 
 // ----- 播放 -----
 function showMsg(t) { const m = $("msg"); m.textContent = t || ""; m.style.display = t ? "block" : "none"; }
+function applyRate() {
+  const r = cur && EPS[cur] ? rateOf(EPS[cur].showId) : (state.rate || 1);
+  a.defaultPlaybackRate = r;
+  a.playbackRate = r;
+  $("rate").textContent = r + "x";
+  $("rate").classList.toggle("on", r !== 1);
+}
 
 function load(id, autoplay) {
   const e = EPS[id];
@@ -480,23 +548,27 @@ function load(id, autoplay) {
   state.last = id; save();
   showMsg("");
   const p = state.prog[id] || {};
-  pendingSeek = (!p.done && p.t > 5) ? p.t : 0;
+  pendingSeek = resumeAt(p);
   a.src = e.audio;
-  a.playbackRate = state.rate;
+  applyRate();
   $("pTitle").textContent = e.title;
   $("pShow").textContent = e.show;
+  const s = SHOWS.find(x => x.id === e.showId);
+  $("pCover").textContent = "";
+  if (s) $("pCover").appendChild(cover(s));
   $("seek").disabled = false;
   $("seek").max = p.d || e.min * 60;
   $("seek").value = pendingSeek;
-  $("cur").textContent = fmt(pendingSeek);
-  $("rem").textContent = "-" + fmt(($("seek").max) - pendingSeek);
+  $("cur").textContent = clock(pendingSeek);
+  $("rem").textContent = "-" + clock(($("seek").max) - pendingSeek);
   if ("mediaSession" in navigator) {
     try {
-      const meta = { title: e.title, artist: e.show };
-      if (e.cover) meta.artwork = [{ src: e.cover }];
-      navigator.mediaSession.metadata = new MediaMetadata(meta);
+      const md = { title: e.title, artist: e.show };
+      if (e.cover) md.artwork = [{ src: e.cover }];
+      navigator.mediaSession.metadata = new MediaMetadata(md);
     } catch (err) {}
   }
+  if (panelKind) openPanel(panelKind);
   render();
   if (autoplay) a.play().catch(() => showMsg("没能开始播放，再点一次播放键。"));
 }
@@ -531,20 +603,19 @@ a.addEventListener("loadedmetadata", () => {
   $("seek").max = Math.floor(a.duration);
   if (pendingSeek) a.currentTime = Math.min(pendingSeek, a.duration - 2);
   pendingSeek = null;
-  a.playbackRate = state.rate;
+  applyRate();
 });
 a.addEventListener("timeupdate", () => {
   if (pendingSeek !== null) return;
   if (!seeking) {
     $("seek").value = a.currentTime;
-    $("cur").textContent = fmt(a.currentTime);
-    $("rem").textContent = "-" + fmt((a.duration || 0) - a.currentTime);
+    $("cur").textContent = clock(a.currentTime);
+    $("rem").textContent = "-" + clock((a.duration || 0) - a.currentTime);
   }
   record(false);
-  if (sleepAt > 0 && Date.now() >= sleepAt) { a.pause(); setSleep(0); }
 });
-a.addEventListener("play", () => { $("play").textContent = "❚❚"; $("play").setAttribute("aria-label", "暂停"); showMsg(""); });
-a.addEventListener("pause", () => { $("play").textContent = "▶"; $("play").setAttribute("aria-label", "播放"); record(true); render(); });
+a.addEventListener("play", () => { $("play").innerHTML = ICON_PAUSE; $("play").setAttribute("aria-label", "暂停"); showMsg(""); });
+a.addEventListener("pause", () => { $("play").innerHTML = ICON_PLAY; $("play").setAttribute("aria-label", "播放"); record(true); render(); });
 a.addEventListener("ended", () => {
   const p = state.prog[cur] = state.prog[cur] || {};
   p.done = true; p.t = 0;
@@ -553,7 +624,7 @@ a.addEventListener("ended", () => {
   const i = state.queue.indexOf(cur);
   if (i >= 0) { state.queue.splice(i, 1); next = state.queue[i] || null; }
   save(); render();
-  if (SLEEPS[sleepIdx] === -1) { setSleep(0); return; }  // 定时"本集完"：不接着放
+  if (sleepMode === -1) { setSleep(0); return; } // 定时"放完这一集"：不接着放
   if (next && EPS[next]) load(next, true);
 });
 a.addEventListener("error", () => {
@@ -563,30 +634,64 @@ a.addEventListener("error", () => {
 a.addEventListener("waiting", () => { if (!a.paused) showMsg("缓冲中…"); });
 a.addEventListener("playing", () => showMsg(""));
 
-// ----- 控件 -----
+// ----- 倍速和定时：点开一排直接选 -----
+function openPanel(kind) {
+  const panel = $("panel");
+  panelKind = kind;
+  panel.textContent = "";
+  panel.hidden = !kind;
+  if (kind === "rate") {
+    const now = cur && EPS[cur] ? rateOf(EPS[cur].showId) : (state.rate || 1);
+    RATES.forEach(r => {
+      const b = el("button", r === now ? "on" : null, r + "x");
+      b.onclick = () => {
+        state.rate = r;                               // 没单独设过的节目沿用最近选的
+        if (cur && EPS[cur]) state.showRate[EPS[cur].showId] = r; // 这档节目记住自己的倍速
+        save(); applyRate(); openPanel(null); render();
+      };
+      panel.appendChild(b);
+    });
+  } else if (kind === "sleep") {
+    const opts = [[0, "不定时"]].concat(SLEEPS.map(v => [v, v === -1 ? "放完这一集" : v + " 分钟"]));
+    opts.forEach(([v, label]) => {
+      const b = el("button", v === sleepMode ? "on" : null, label);
+      b.onclick = () => { setSleep(v); openPanel(null); };
+      panel.appendChild(b);
+    });
+  }
+}
+function showSleep() {
+  const b = $("sleep");
+  if (sleepMode === 0) b.textContent = "定时";
+  else if (sleepMode === -1) b.textContent = "本集完";
+  else b.textContent = clock(Math.max(0, (sleepAt - Date.now()) / 1000));
+  b.classList.toggle("on", sleepMode !== 0);
+}
+function setSleep(v) {
+  sleepMode = v;
+  sleepAt = v > 0 ? Date.now() + v * 60000 : 0;
+  clearInterval(sleepTick);
+  sleepTick = null;
+  if (v > 0) {
+    // 独立计时：到点就停并且把定时清掉，不管当时是在放还是已经暂停
+    sleepTick = setInterval(() => {
+      if (Date.now() >= sleepAt) { if (!a.paused) a.pause(); setSleep(0); }
+      else showSleep();
+    }, 1000);
+  }
+  showSleep();
+}
+$("rate").onclick = () => openPanel(panelKind === "rate" ? null : "rate");
+$("sleep").onclick = () => openPanel(panelKind === "sleep" ? null : "sleep");
+
+// ----- 其他控件 -----
+$("play").innerHTML = ICON_PLAY;
 $("play").onclick = toggle;
 $("back").onclick = () => skip(-SKIP);
 $("fwd").onclick = () => skip(SKIP);
-function showRate() {
-  $("rate").textContent = state.rate + "x";
-  $("rate").classList.toggle("on", state.rate !== 1);
-}
-$("rate").onclick = () => {
-  const i = RATES.indexOf(state.rate);
-  state.rate = RATES[(i + 1) % RATES.length];
-  a.playbackRate = state.rate;
-  showRate(); save();
-};
-function setSleep(i) {
-  sleepIdx = i;
-  const v = SLEEPS[i];
-  sleepAt = v > 0 ? Date.now() + v * 60000 : 0;
-  $("sleep").textContent = v === 0 ? "定时" : v === -1 ? "本集完" : v + "分";
-  $("sleep").classList.toggle("on", v !== 0);
-}
-$("sleep").onclick = () => setSleep((sleepIdx + 1) % SLEEPS.length);
+$("pGo").onclick = () => { if (cur && EPS[cur]) location.hash = "s-" + EPS[cur].showId; };
 const seek = $("seek");
-seek.addEventListener("input", () => { seeking = true; $("cur").textContent = fmt(seek.value); });
+seek.addEventListener("input", () => { seeking = true; $("cur").textContent = clock(seek.value); });
 seek.addEventListener("change", () => {
   seeking = false;
   if (pendingSeek !== null) { pendingSeek = Number(seek.value); return; }
@@ -608,17 +713,17 @@ if ("mediaSession" in navigator) {
   set("nexttrack", nextInQueue);
   set("seekto", d => { if (d && d.seekTime != null) { a.currentTime = d.seekTime; record(true); } });
 }
-document.addEventListener("visibilitychange", () => { if (document.hidden) record(true); });
+document.addEventListener("visibilitychange", () => { if (document.hidden) record(true); else showSleep(); });
 window.addEventListener("pagehide", () => record(true));
 
 // ----- 启动 -----
-showRate();
+applyRate();
 fetch("shows.json?t=" + Date.now())
   .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then(j => {
     SHOWS = j.shows || [];
     SHOWS.forEach(s => s.episodes.forEach(e => {
-      if (e.audio) EPS[e.id] = Object.assign({ show: s.title, cover: s.cover || null }, e);
+      if (e.audio) EPS[e.id] = Object.assign({ show: s.title, showId: s.id, cover: s.cover || null }, e);
     }));
     state.queue = state.queue.filter(id => EPS[id]);
     render();
