@@ -1,0 +1,515 @@
+{
+ "updated": "2026-11-20",
+ "shows": [
+  {
+   "id": "625635587bfca4e73e990703",
+   "title": "岩中花述",
+   "episodes": [
+    {
+     "id": "6aafab73ac389df82734bbf3",
+     "title": "S9E9 鲁豫对话刘索拉｜一生不断找北，直到天高地广",
+     "min": 112,
+     "date": "2026-09-23",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lnEAf-aVkE89Z_ImU_6V0EiTfaoK.m4a"
+    },
+    {
+     "id": "6a9d6a20f03e74ee6b05f71d",
+     "title": "S9E8 鲁豫对话庆山｜从前要如我所愿，现在接受如其所是",
+     "min": 116,
+     "date": "2026-09-07",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lskpIc9plRoGtsSmf_9z_8v3LloQ.m4a"
+    },
+    {
+     "id": "6a719a98ab3a91c24a0f95e2",
+     "title": "S9E7 鲁豫对话芮迺伟｜一生手谈，半生漂泊，归来棋未凉",
+     "min": 99,
+     "date": "2026-08-05",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/loWNxAmmxzij3N5Ktk0hFAascPmC.m4a"
+    },
+    {
+     "id": "6a5f4f206356eb2d9be61d72",
+     "title": "S9E6 鲁豫对话杨贵媚｜菜市场长大的「小妈妈」，把角色活成人生",
+     "min": 97,
+     "date": "2026-07-22",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/llomnFm5RyTlZMf3iS7MPi_HKCOs.m4a"
+    },
+    {
+     "id": "6a4d11412e335a35a80fa724",
+     "title": "S9E5 鲁豫对话陈玉亭｜失去一切之前，我必须成为「白眼狼」",
+     "min": 140,
+     "date": "2026-07-08",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqKjKFxY84L1Nao5IewI6zVUTgsg.m4a"
+    },
+    {
+     "id": "6a27f68a41404ca3b66736b6",
+     "title": "S9E4 鲁豫对话蒙曼｜生命不要早知如此，我决定更勇敢",
+     "min": 117,
+     "date": "2026-06-10",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqJU-KTp1HMLFRh8C3Jqev6W_GGB.m4a"
+    },
+    {
+     "id": "6a1eb4cc7444b57222322dcf",
+     "title": "S9E3 鲁豫对话蔡皋｜我本布衣，种花种草种春天",
+     "min": 80,
+     "date": "2026-06-03",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/liZInOnroLcuftHDNBrJMUZTgdCB.m4a"
+    },
+    {
+     "id": "6a1546f3ff7b9a8c0a5b56fe",
+     "title": "S9E2 鲁豫对话张诺｜我不优秀，但我依然是一个胜利者",
+     "min": 79,
+     "date": "2026-05-27",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/ln75QhLvXAs01AWTgKmgumbjH2lP.m4a"
+    },
+    {
+     "id": "6a0be7321b7bd502956b80cb",
+     "title": "S9E1 鲁豫对话张赞英｜那朵叫「赞英」的花",
+     "min": 86,
+     "date": "2026-05-20",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpKVxF2k5XcsXuJHms-QVF0VUVkI.m4a"
+    },
+    {
+     "id": "69bf524c2d318777c9169361",
+     "title": "S8E9 鲁豫对话李睿｜我只是一名记者，留在了战争发生的地方",
+     "min": 108,
+     "date": "2026-03-22",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqi93H3dBOfO_NOVmv5hHCieWVQk.m4a"
+    },
+    {
+     "id": "698b3e7466e2c30377dcfa2e",
+     "title": "S8E8 鲁豫对话张虹｜冰场上的向日葵，日复一日、向光疯长",
+     "min": 89,
+     "date": "2026-02-11",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lg6e11IUmHpTrtUeYy7xfnYwz_SK.m4a"
+    },
+    {
+     "id": "6953815414db1df9ef81f6b4",
+     "title": "S8E7 鲁豫对话李银河｜从「三反」到「银河」，她走出了时代",
+     "min": 85,
+     "date": "2025-12-31",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lldnBukGmdYBPKhVu3iMbIbGrmn6.m4a"
+    },
+    {
+     "id": "69416af04c65abaff352d88f",
+     "title": "S8E6 鲁豫对话鸟鸟｜没有魅力的人，也值得拥有世界",
+     "min": 87,
+     "date": "2025-12-17",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpP0InS7yMy1g7yRAtWTQ_G_AoBC.m4a"
+    },
+    {
+     "id": "6937f38c4ef12f9fe9be1633",
+     "title": "S8E5 鲁豫对话朱天文｜他已登岸归家，吾独续写「巫」言",
+     "min": 89,
+     "date": "2025-12-10",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lljTIALZuXN1DJRRWQYyZ6FCVc9X.m4a"
+    },
+    {
+     "id": "691c439f6018cc2c986d297a",
+     "title": "S8E4 鲁豫对话黎紫书｜飞向更高远的天空，即便空气稀薄",
+     "min": 102,
+     "date": "2025-11-19",
+     "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpb6VBjdb6ib5f16I8qZ-Ojq6FWj.m4a"
+    }
+   ]
+  },
+  {
+   "id": "68981df29e7bcd326eb91d88",
+   "title": "罗永浩的十字路口",
+   "episodes": [
+    {
+     "id": "6afbb377fe62f8f52c4c4f3a",
+     "title": "纪录片导演陈晓卿×罗永浩！他一直被命运推着，却走出了自己的路",
+     "min": 259,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/lmlhgbLbCKgAL5TjIPNUgQW1rSaI.m4a"
+    },
+    {
+     "id": "6aea8204c96c8942ec16ee88",
+     "title": "徕芬科技创始人叶洪新×罗永浩！初中毕业后，我先造飞机去了......",
+     "min": 199,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/ll4eKwtvjNpxit2gDkVcfPHF0ELi.m4a"
+    },
+    {
+     "id": "6a9625b9f03e74ee6b02f0df",
+     "title": "手工耿×罗永浩！“村口的五金店里，出现了一个达达主义艺术家”",
+     "min": 224,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/lgBDj_JuqsLYGA0uLvvRqWNEDgA1.m4a"
+    },
+    {
+     "id": "6a734c29ab3a91c24a1067fa",
+     "title": "罗永浩的X字路口！我们能活到今天，多亏了祖传的势利眼",
+     "min": 175,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/lhKQsZ8pkcBLnmAEBsZ1m50TYSoS.m4a"
+    },
+    {
+     "id": "6a6b586b56a3f3491ba79b33",
+     "title": "零跑汽车朱江明×罗永浩！零跑汽车十年：不会讲故事的人，如何卖成了第一",
+     "min": 187,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/lheI72y0MlQRh2XXbetNqdp_0Stb.m4a"
+    },
+    {
+     "id": "6a62befca3fec224d5a2715c",
+     "title": "罗永浩的X字路口！“精神病”失控大乱斗，强迫症、ADHD、攻击型人格障碍.......",
+     "min": 153,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/liR8W53XeWCMvbqRB1x1osaiRaFg.m4a"
+    },
+    {
+     "id": "6a57143327a4eec16c40eafa",
+     "title": "罗永浩的X字路口！一年一度装x大会",
+     "min": 178,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/lnBvS1yzZuAowvr0QAcmJLy2fTX-.m4a"
+    },
+    {
+     "id": "6a5085ca4adef2b36561b8fa",
+     "title": "罗永浩的X字路口！如果可以，你会删除伴侣出轨的记忆吗？",
+     "min": 132,
+     "audio": "https://media.xyzcdn.net/68981df29e7bcd326eb91d88/ln6Gnhmsx1xo3p2N8z2pOWcIqnur.m4a"
+    },
+    {
+     "id": "6a3df9b39d2f5743683e1c13",
+     "title": "罗永浩的X字路口！不借钱给朋友，就会失去朋友失去钱！",
+     "min": 160,
+     "audio": null
+    },
+    {
+     "id": "6a2a32c83eedf1f4b268db58",
+     "title": "王晶×罗永浩！谁还记得大导演张彻楚原？我死了什么都不需要留下",
+     "min": 206,
+     "audio": null
+    },
+    {
+     "id": "6a190f4f7460cabdeb57a7ad",
+     "title": "罗永浩的X字路口！当一群情绪不稳定的杠精讨论起情绪稳定",
+     "min": 154,
+     "audio": null
+    },
+    {
+     "id": "6a0e83fa1b7bd502958f347d",
+     "title": "郑执×罗永浩！总是赶末班车的人，可以改进时间管理......也可以拥有一辆属于自己的车",
+     "min": 160,
+     "audio": null
+    },
+    {
+     "id": "6a037114e1eb34a939471baf",
+     "title": "李想×罗永浩！李想的理想：通过 AI 技术，让普通人也过上富豪的生活",
+     "min": 141,
+     "audio": null
+    },
+    {
+     "id": "69e19a1ee2c8be31556f0c7a",
+     "title": "携程梁建章×罗永浩！在企业家与学者之间，他选择了最艰难的“往返票”",
+     "min": 220,
+     "audio": null
+    },
+    {
+     "id": "69db5089e2c8be3155fd7978",
+     "title": "“无聊斋” × 罗永浩的X字路口！喜剧工作者在AI时代可以多“活”几年",
+     "min": 151,
+     "audio": null
+    }
+   ]
+  },
+  {
+   "id": "65bb55f6513a776b57dedb32",
+   "title": "李诞",
+   "episodes": [
+    {
+     "id": "6aeb10f797726cd4675cbe17",
+     "title": "李诞对话陈晓卿丨客从何处来",
+     "min": 121,
+     "audio": "https://media.xyzcdn.net/69ce4a21285ec44c7eb656fd/liGSxsKjWzEg-VeU4iNcWBWHkYus.m4a"
+    },
+    {
+     "id": "6ad8a08cb381c0fcba199e8d",
+     "title": "43.与天昭闲聊，怎么就过了十八年",
+     "min": 59,
+     "audio": "https://media.xyzcdn.net/65bb55f6513a776b57dedb32/lqtqjdX60BxxJZgYSrBD3Uh8ko6q.m4a"
+    },
+    {
+     "id": "6acdf192195d838e2af1368b",
+     "title": "42.与黄渤闲聊：走穴闯江湖的“神话故事”",
+     "min": 49,
+     "audio": "https://media.xyzcdn.net/65bb55f6513a776b57dedb32/lvByO6cm7UYMlep2wWclwI_g9dy0.m4a"
+    },
+    {
+     "id": "6ab32daa93d5eb3bdc798774",
+     "title": "李诞对话王祖贤丨隐退22年后首个访谈：美梦似路长",
+     "min": 121,
+     "audio": "https://media.xyzcdn.net/69ce4a21285ec44c7eb656fd/llL0SahBmy8JVaTUerhojJ2cDVDc.m4a"
+    },
+    {
+     "id": "6ab1db4593d5eb3bdc790012",
+     "title": "41.与连三球闲聊：从没听过的身体观",
+     "min": 62,
+     "audio": "https://media.xyzcdn.net/65bb55f6513a776b57dedb32/lr1PA1ezpvQpzrBvfVbo6dRh8H7b.m4a"
+    },
+    {
+     "id": "6a966be2a0210c197dcb88ab",
+     "title": "40.与邓师傅闲聊：做川菜五十年",
+     "min": 84,
+     "audio": "https://media.xyzcdn.net/65bb55f6513a776b57dedb32/liULaant-oiLKSAyj8GJ6V84BVt0.m4a"
+    },
+    {
+     "id": "6a816ecf17676351c5729c18",
+     "title": "39.和方三文闲聊：普通人投资在关心什么",
+     "min": 48,
+     "audio": "https://media.xyzcdn.net/65bb55f6513a776b57dedb32/lspqNa0n_7Pkbn0ArYBFFrVbXf1g.m4a"
+    },
+    {
+     "id": "6a7c60d836641f136d8736a7",
+     "title": "李诞对话李娟丨把自己藏进群山，是我最后的自我保护",
+     "min": 80,
+     "audio": "https://media.xyzcdn.net/69ce4a21285ec44c7eb656fd/lhsL2cEc5jcvBSMd5kj0KWTv3gWK.m4a"
+    },
+    {
+     "id": "6a31280d43a22a695584c7ac",
+     "title": "38.与川糖周掌门闲聊：茅台！",
+     "min": 80,
+     "audio": null
+    },
+    {
+     "id": "69eb22241d989496e768a393",
+     "title": "37.和半拿铁闲聊：一不小心就开始回忆",
+     "min": 78,
+     "audio": null
+    },
+    {
+     "id": "69afca292a2882aae747aadc",
+     "title": "36.李诞×陈嘉映：“我擅长理解伟大心灵”",
+     "min": 79,
+     "audio": null
+    },
+    {
+     "id": "697b4975b4be4c149b24a741",
+     "title": "35.鉴定网络热门生物：无穷小亮！",
+     "min": 66,
+     "audio": null
+    },
+    {
+     "id": "695fc43c8f388c61e1e30662",
+     "title": "34.小浣熊水浒卡的作者们！",
+     "min": 69,
+     "audio": null
+    },
+    {
+     "id": "694cf49c946dca092549666d",
+     "title": "33.与刘擎在南极聊哲学",
+     "min": 87,
+     "audio": null
+    },
+    {
+     "id": "6941631e4c65abaff3514b75",
+     "title": "32.从一条到徐沪生，媒体二十年",
+     "min": 79,
+     "audio": null
+    }
+   ]
+  },
+  {
+   "id": "673c81c8937dac13cc53bd8c",
+   "title": "文明之旅",
+   "episodes": [
+    {
+     "id": "6afbf6acfe62f8f52c4c7896",
+     "title": "《文明之旅》公元1133年完整版正片：谁在和朝廷争夺百姓？",
+     "min": 55,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/lvuKDa6njnOIgqFkTgNl3mX53Khx.m4a"
+    },
+    {
+     "id": "6af2efde5b7c4709bfe40828",
+     "title": "《文明之旅》公元1132年完整版正片：南宋如何变“盗”为兵？",
+     "min": 58,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/libWOn6efe2F03Z_2M7Q3tT2GykS.m4a"
+    },
+    {
+     "id": "6ae99a28c96c8942ec16a3c1",
+     "title": "《文明之旅》公元1131年完整版正片：孟太后为什么能拯救宋朝？",
+     "min": 61,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/li4JSDrvs4ZrN3weGEqnk4kVc9WY.m4a"
+    },
+    {
+     "id": "6ae072d4c96c8942ec130d15",
+     "title": "《文明之旅》公元1130年完整版正片：金朝为什么扶植刘豫当傀儡？",
+     "min": 63,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/ltpZAl-Y0H29g2M57KLTqgZnB7uI.m4a"
+    },
+    {
+     "id": "6ad77053ef67611cac798ec5",
+     "title": "《文明之旅》公元1129年完整版正片：大宋为什么没散架？",
+     "min": 63,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/lmWYPy1DLOzC0I5dtJjyh77oD1_D.m4a"
+    },
+    {
+     "id": "6ace00fa195d838e2af14062",
+     "title": "《文明之旅》公元1128年完整版正片：赵构为什么不回开封？",
+     "min": 59,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/llTnEgMWd5fDVTtZmAMrtN06rhCr.m4a"
+    },
+    {
+     "id": "6abf9569e742e36efcbdc736",
+     "title": "《文明之旅》公元1127年完整版正片：靖康之耻究竟耻在哪里？",
+     "min": 54,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/lkrWstsLz1vFbYx7gf6URF8B7gAe.m4a"
+    },
+    {
+     "id": "6abb67ca195d838e2aeb800c",
+     "title": "《文明之旅》公元1126年完整版正片：皇帝为什么不负责？",
+     "min": 58,
+     "audio": "https://media.xyzcdn.net/673c81c8937dac13cc53bd8c/lnNSBWrS7EgY0ZdkDXP1yvCUnlVf.m4a"
+    },
+    {
+     "id": "6ab284bc93d5eb3bdc796037",
+     "title": "《文明之旅》公元1125年完整版正片：和平为什么会死？",
+     "min": 55,
+     "audio": null
+    },
+    {
+     "id": "6aa907ff9d32647781698013",
+     "title": "《文明之旅》公元1124年完整版正片：宋徽宗为何重用蔡京？",
+     "min": 56,
+     "audio": null
+    },
+    {
+     "id": "6a9fca55f03e74ee6b07062e",
+     "title": "《文明之旅》公元1123年完整版正片：耶律大石如何复活大辽？",
+     "min": 57,
+     "audio": null
+    },
+    {
+     "id": "6a96c5b9f03e74ee6b036186",
+     "title": "《文明之旅》公元1122年完整版正片：为什么大宋收复不了燕京？",
+     "min": 53,
+     "audio": null
+    },
+    {
+     "id": "6a8d8234ef65145dfcc533c9",
+     "title": "《文明之旅》公元1121年完整版正片：花石纲为什么停不下来？",
+     "min": 54,
+     "audio": null
+    },
+    {
+     "id": "6a8432345aeb2a5712e8bc4b",
+     "title": "《文明之旅》公元1120年完整版正片：大宋繁华的背面是什么？",
+     "min": 53,
+     "audio": null
+    },
+    {
+     "id": "6a7adb8817676351c5702f92",
+     "title": "《文明之旅》公元1119年完整版正片：宋徽宗为何如此爱“虚名”？",
+     "min": 51,
+     "audio": null
+    }
+   ]
+  },
+  {
+   "id": "660840711519139e4f9699ef",
+   "title": "小fool人",
+   "episodes": [
+    {
+     "id": "6a15bb69ff7b9a8c0a5ba4f0",
+     "title": "048. fool愁者联盟版：省钱这件大事",
+     "min": 105,
+     "audio": null
+    },
+    {
+     "id": "6a01c3f6e1eb34a9392f1845",
+     "title": "047. 乱翻书：地铁上可以洗澡吃芒果吗",
+     "min": 58,
+     "audio": null
+    },
+    {
+     "id": "69eb18bf1e94ae69210c37b9",
+     "title": "046. 海岛旅行，让我们变成了那种关系！",
+     "min": 85,
+     "audio": null
+    },
+    {
+     "id": "696e1b43109824f9e1592ab7",
+     "title": "045. 中女的年终总结：关于创造更大的自由",
+     "min": 68,
+     "audio": null
+    },
+    {
+     "id": "68fc9f9d083a71a4eb30e624",
+     "title": "044. 带点脱口秀的浪漫夏日故事 ft. 庞颖",
+     "min": 70,
+     "audio": null
+    },
+    {
+     "id": "68e9534e525f51df38afbbf0",
+     "title": "043. 从伍尔夫到我们：一间房的多重宇宙",
+     "min": 70,
+     "audio": null
+    },
+    {
+     "id": "68ce59ada56ca3e0c45dbecd",
+     "title": "042. 小fool人特别篇｜当主播们各自准备了一个节目",
+     "min": 48,
+     "audio": null
+    },
+    {
+     "id": "68b706555faf368659b572d9",
+     "title": "041. 脱口秀专场巡演手记：张目对一对新型关系",
+     "min": 85,
+     "audio": null
+    },
+    {
+     "id": "68a1ec7a42cc2798e704b6fb",
+     "title": "040. 录制日记｜淘汰，我们用喜剧收尾",
+     "min": 70,
+     "audio": null
+    },
+    {
+     "id": "68950248638b0158798234bb",
+     "title": "039. 陌生人游戏2：一场桌游引发的爆料和读心",
+     "min": 67,
+     "audio": null
+    },
+    {
+     "id": "6870040260f8f77d40e5e5ae",
+     "title": "038. 我的副业是漂泊：飞行吧，喜剧人生！",
+     "min": 54,
+     "audio": null
+    },
+    {
+     "id": "68301fd1fcbc2e206b5c9090",
+     "title": "037. 生活中擦肩而过的熟人 ft. 《诺拉A梦》",
+     "min": 73,
+     "audio": null
+    },
+    {
+     "id": "6824072fb7c8a9962cfe07b7",
+     "title": "036. 这一面，刚刚好：幸运从每一面开始",
+     "min": 69,
+     "audio": null
+    },
+    {
+     "id": "681bf133d8d622bb8061e13b",
+     "title": "035. 小fool人 x 海豹王XX：当漫画星球传来脱口秀星球的回声",
+     "min": 75,
+     "audio": null
+    },
+    {
+     "id": "67da3abf78103db3bd63c5e3",
+     "title": "034. 聊聊我们最近看的美剧、喜剧、音乐和流行文化",
+     "min": 90,
+     "audio": null
+    }
+   ]
+  },
+  {
+   "id": "61e7b5314675a08411f51319",
+   "title": "Talk三联",
+   "episodes": []
+  },
+  {
+   "id": "6791e460e9b113a495cb61d4",
+   "title": "her edition",
+   "episodes": []
+  },
+  {
+   "id": "697d89b181f5d59286969451",
+   "title": "时雨集",
+   "episodes": []
+  }
+ ]
+}

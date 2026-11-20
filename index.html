@@ -16,11 +16,19 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--text);
     font: 16px/1.5 -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif; }
-  header { padding: 20px 16px 8px; }
-  header h1 { margin: 0; font-size: 22px; font-weight: 700; }
-  header p { margin: 2px 0 0; color: var(--dim); font-size: 13px; }
-  main { padding: 0 12px 240px; max-width: 720px; margin: 0 auto; }
-  h2 { font-size: 14px; color: var(--accent); font-weight: 600; margin: 22px 4px 8px; letter-spacing: .04em; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 12px 0;
+    border-bottom: 1px solid var(--line); }
+  .hin { max-width: 720px; margin: 0 auto; }
+  #q { width: 100%; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    font: inherit; font-size: 15px; padding: 9px 12px; border-radius: 10px; }
+  #q::placeholder { color: var(--dim); }
+  #tabs { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+  #tabs::-webkit-scrollbar { display: none; }
+  #tabs button { flex: none; background: var(--panel); color: var(--dim); border: 0; font: inherit;
+    font-size: 14px; padding: 6px 13px; border-radius: 16px; cursor: pointer; white-space: nowrap; }
+  #tabs button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  main { padding: 10px 12px 250px; max-width: 720px; margin: 0 auto; }
+  .note { color: var(--dim); font-size: 13.5px; padding: 14px 4px; }
   .ep { display: flex; align-items: stretch; background: var(--panel); border-radius: 12px;
     margin-bottom: 8px; overflow: hidden; position: relative; }
   .ep.now { outline: 1.5px solid var(--accent); }
@@ -34,7 +42,7 @@
   .ep.done button.chk { color: var(--accent); }
 
   #player { position: fixed; left: 0; right: 0; bottom: 0; background: #191e21; border-top: 1px solid var(--line);
-    padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); }
+    padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); z-index: 6; }
   #player .in { max-width: 720px; margin: 0 auto; }
   #pTitle { font-size: 14.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #pShow { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -55,10 +63,12 @@
 </head>
 <body>
 <header>
-  <h1>我的播客</h1>
-  <p id="sub">点一集开始播放，进度会自动记住</p>
+  <div class="hin">
+    <input id="q" type="search" placeholder="搜索标题或嘉宾" aria-label="搜索单集" autocomplete="off">
+    <div id="tabs" role="tablist"></div>
+  </div>
 </header>
-<main id="list"></main>
+<main id="list"><div class="note">正在加载节目…</div></main>
 
 <div id="player">
   <div class="in">
@@ -79,133 +89,20 @@
 <audio id="a" preload="metadata"></audio>
 
 <script>
-// ===== 节目数据（2026-11-19 抓取）=====
-const SHOWS = [
- {
-  "id": "625635587bfca4e73e990703",
-  "title": "岩中花述",
-  "episodes": [
-   {
-    "id": "6aafab73ac389df82734bbf3",
-    "title": "S9E9 鲁豫对话刘索拉｜一生不断找北，直到天高地广",
-    "min": 112,
-    "date": "2026-09-23",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lnEAf-aVkE89Z_ImU_6V0EiTfaoK.m4a"
-   },
-   {
-    "id": "6a9d6a20f03e74ee6b05f71d",
-    "title": "S9E8 鲁豫对话庆山｜从前要如我所愿，现在接受如其所是",
-    "min": 116,
-    "date": "2026-09-07",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lskpIc9plRoGtsSmf_9z_8v3LloQ.m4a"
-   },
-   {
-    "id": "6a719a98ab3a91c24a0f95e2",
-    "title": "S9E7 鲁豫对话芮迺伟｜一生手谈，半生漂泊，归来棋未凉",
-    "min": 99,
-    "date": "2026-08-05",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/loWNxAmmxzij3N5Ktk0hFAascPmC.m4a"
-   },
-   {
-    "id": "6a5f4f206356eb2d9be61d72",
-    "title": "S9E6 鲁豫对话杨贵媚｜菜市场长大的「小妈妈」，把角色活成人生",
-    "min": 97,
-    "date": "2026-07-22",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/llomnFm5RyTlZMf3iS7MPi_HKCOs.m4a"
-   },
-   {
-    "id": "6a4d11412e335a35a80fa724",
-    "title": "S9E5 鲁豫对话陈玉亭｜失去一切之前，我必须成为「白眼狼」",
-    "min": 140,
-    "date": "2026-07-08",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqKjKFxY84L1Nao5IewI6zVUTgsg.m4a"
-   },
-   {
-    "id": "6a27f68a41404ca3b66736b6",
-    "title": "S9E4 鲁豫对话蒙曼｜生命不要早知如此，我决定更勇敢",
-    "min": 117,
-    "date": "2026-06-10",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqJU-KTp1HMLFRh8C3Jqev6W_GGB.m4a"
-   },
-   {
-    "id": "6a1eb4cc7444b57222322dcf",
-    "title": "S9E3 鲁豫对话蔡皋｜我本布衣，种花种草种春天",
-    "min": 80,
-    "date": "2026-06-03",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/liZInOnroLcuftHDNBrJMUZTgdCB.m4a"
-   },
-   {
-    "id": "6a1546f3ff7b9a8c0a5b56fe",
-    "title": "S9E2 鲁豫对话张诺｜我不优秀，但我依然是一个胜利者",
-    "min": 79,
-    "date": "2026-05-27",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/ln75QhLvXAs01AWTgKmgumbjH2lP.m4a"
-   },
-   {
-    "id": "6a0be7321b7bd502956b80cb",
-    "title": "S9E1 鲁豫对话张赞英｜那朵叫「赞英」的花",
-    "min": 86,
-    "date": "2026-05-20",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpKVxF2k5XcsXuJHms-QVF0VUVkI.m4a"
-   },
-   {
-    "id": "69bf524c2d318777c9169361",
-    "title": "S8E9 鲁豫对话李睿｜我只是一名记者，留在了战争发生的地方",
-    "min": 108,
-    "date": "2026-03-22",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lqi93H3dBOfO_NOVmv5hHCieWVQk.m4a"
-   },
-   {
-    "id": "698b3e7466e2c30377dcfa2e",
-    "title": "S8E8 鲁豫对话张虹｜冰场上的向日葵，日复一日、向光疯长",
-    "min": 89,
-    "date": "2026-02-11",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lg6e11IUmHpTrtUeYy7xfnYwz_SK.m4a"
-   },
-   {
-    "id": "6953815414db1df9ef81f6b4",
-    "title": "S8E7 鲁豫对话李银河｜从「三反」到「银河」，她走出了时代",
-    "min": 85,
-    "date": "2025-12-31",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lldnBukGmdYBPKhVu3iMbIbGrmn6.m4a"
-   },
-   {
-    "id": "69416af04c65abaff352d88f",
-    "title": "S8E6 鲁豫对话鸟鸟｜没有魅力的人，也值得拥有世界",
-    "min": 87,
-    "date": "2025-12-17",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpP0InS7yMy1g7yRAtWTQ_G_AoBC.m4a"
-   },
-   {
-    "id": "6937f38c4ef12f9fe9be1633",
-    "title": "S8E5 鲁豫对话朱天文｜他已登岸归家，吾独续写「巫」言",
-    "min": 89,
-    "date": "2025-12-10",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lljTIALZuXN1DJRRWQYyZ6FCVc9X.m4a"
-   },
-   {
-    "id": "691c439f6018cc2c986d297a",
-    "title": "S8E4 鲁豫对话黎紫书｜飞向更高远的天空，即便空气稀薄",
-    "min": 102,
-    "date": "2025-11-19",
-    "audio": "https://media.xyzcdn.net/625635587bfca4e73e990703/lpb6VBjdb6ib5f16I8qZ-Ojq6FWj.m4a"
-   }
-  ]
- }
-];
-
+// 节目数据在 shows.json 里，由每日定时任务更新；本页只负责播放和记进度。
 const SKIP = 15;
 const RATES = [0.8, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
 const SLEEPS = [0, 15, 30, 60, -1]; // 分钟；-1 = 本集结束
 const KEY = "xyzplayer.v1";
+const NOW = "__now";
 
 const $ = id => document.getElementById(id);
 const a = $("a");
+let SHOWS = [];
 const EPS = {};
-SHOWS.forEach(s => s.episodes.forEach(e => { EPS[e.id] = Object.assign({ show: s.title }, e); }));
 
-// ----- 存储 -----
-let state = { prog: {}, rate: 1, last: null };
+// ----- 存储（只在当前浏览器里）-----
+let state = { prog: {}, rate: 1, last: null, tab: null };
 let storageOK = true;
 try {
   const raw = localStorage.getItem(KEY);
@@ -215,63 +112,110 @@ function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOK = false; }
 }
 
-let cur = null;        // 当前单集 id
+let cur = null;         // 当前单集 id
 let pendingSeek = null; // 元数据加载后要跳到的位置
 let seeking = false;
 let sleepIdx = 0, sleepAt = 0;
 let lastSave = 0;
+let query = "";
+let loadErr = "";
 
 function fmt(s) {
   s = Math.max(0, Math.floor(s || 0));
   const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
   return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(ss).padStart(2, "0");
 }
-function rateLabel(r) { return r + "x"; }
+
+// ----- 标签 -----
+function renderTabs() {
+  const tabs = $("tabs");
+  tabs.textContent = "";
+  const items = [{ id: NOW, title: "在听" }].concat(SHOWS);
+  items.forEach(s => {
+    const b = document.createElement("button");
+    b.textContent = s.title;
+    b.setAttribute("role", "tab");
+    if (!query && s.id === state.tab) b.className = "on";
+    b.onclick = () => {
+      state.tab = s.id; save();
+      query = ""; $("q").value = "";
+      renderTabs(); render();
+      window.scrollTo(0, 0);
+    };
+    tabs.appendChild(b);
+  });
+}
 
 // ----- 列表 -----
+function row(e, withShow) {
+  const p = state.prog[e.id] || {};
+  const r = document.createElement("div");
+  r.className = "ep" + (p.done ? " done" : "") + (e.id === cur ? " now" : "");
+  const b = document.createElement("button");
+  b.className = "main";
+  const t = document.createElement("div"); t.className = "t"; t.textContent = e.title;
+  const m = document.createElement("div"); m.className = "m";
+  const parts = [];
+  if (withShow) parts.push(e.show);
+  if (e.date) parts.push(e.date);
+  parts.push(e.min + " 分钟");
+  if (p.done) parts.push("已听完");
+  else if (p.t > 5) parts.push("听到 " + fmt(p.t));
+  m.textContent = parts.join(" · ");
+  b.append(t, m);
+  b.onclick = () => play(e.id);
+  const c = document.createElement("button");
+  c.className = "chk";
+  c.textContent = p.done ? "✓" : "○";
+  c.setAttribute("aria-label", p.done ? "标为未听" : "标为已听");
+  c.onclick = () => {
+    const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
+    q.done = !q.done;
+    if (!q.done) q.t = 0;
+    save(); render();
+  };
+  r.append(b, c);
+  if (!p.done && p.t > 5) {
+    const d = p.d || e.min * 60;
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    bar.style.width = Math.min(100, p.t / d * 100) + "%";
+    r.appendChild(bar);
+  }
+  return r;
+}
+function note(text) {
+  const n = document.createElement("div");
+  n.className = "note"; n.textContent = text;
+  return n;
+}
 function render() {
   const list = $("list");
   list.textContent = "";
-  SHOWS.forEach(s => {
-    const h = document.createElement("h2");
-    h.textContent = s.title;
-    list.appendChild(h);
-    s.episodes.forEach(e => {
-      const p = state.prog[e.id] || {};
-      const row = document.createElement("div");
-      row.className = "ep" + (p.done ? " done" : "") + (e.id === cur ? " now" : "");
-      const b = document.createElement("button");
-      b.className = "main";
-      const t = document.createElement("div"); t.className = "t"; t.textContent = e.title;
-      const m = document.createElement("div"); m.className = "m";
-      let meta = (e.date ? e.date + " · " : "") + e.min + " 分钟";
-      if (p.done) meta += " · 已听完";
-      else if (p.t > 5) meta += " · 听到 " + fmt(p.t);
-      m.textContent = meta;
-      b.append(t, m);
-      b.onclick = () => play(e.id);
-      const c = document.createElement("button");
-      c.className = "chk";
-      c.textContent = p.done ? "✓" : "○";
-      c.setAttribute("aria-label", p.done ? "标为未听" : "标为已听");
-      c.onclick = () => {
-        const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
-        q.done = !q.done;
-        if (!q.done) q.t = 0;
-        save(); render();
-      };
-      row.append(b, c);
-      if (!p.done && p.t > 5) {
-        const d = p.d || e.min * 60;
-        const bar = document.createElement("div");
-        bar.className = "bar";
-        bar.style.width = Math.min(100, p.t / d * 100) + "%";
-        row.appendChild(bar);
-      }
-      list.appendChild(row);
-    });
-  });
-  if (!storageOK) $("sub").textContent = "注意：这个浏览器不让保存数据，关掉页面后进度会丢";
+  if (loadErr) { list.appendChild(note(loadErr)); return; }
+  if (!storageOK) list.appendChild(note("注意：这个浏览器不让保存数据，关掉页面后进度会丢。"));
+  const playable = Object.values(EPS);
+  if (query) {
+    const q = query.toLowerCase();
+    const hits = playable.filter(e => (e.title + " " + e.show).toLowerCase().includes(q));
+    if (!hits.length) list.appendChild(note("没有找到包含“" + query + "”的单集。"));
+    hits.forEach(e => list.appendChild(row(e, true)));
+    return;
+  }
+  if (state.tab === NOW) {
+    const going = playable.filter(e => { const p = state.prog[e.id]; return p && !p.done && p.t > 5; })
+      .sort((x, y) => (state.prog[y.id].at || 0) - (state.prog[x.id].at || 0));
+    if (!going.length) list.appendChild(note("还没有听到一半的节目。从上面选一档节目开始听。"));
+    going.forEach(e => list.appendChild(row(e, true)));
+    return;
+  }
+  const s = SHOWS.find(x => x.id === state.tab);
+  if (!s) return;
+  const ok = s.episodes.filter(e => e.audio);
+  const missing = s.episodes.length - ok.length;
+  if (!ok.length) list.appendChild(note("这档节目的单集还在补充中，下次更新后就会出现。"));
+  ok.forEach(e => list.appendChild(row(EPS[e.id], false)));
+  if (ok.length && missing) list.appendChild(note("另有 " + missing + " 集的音频还在补充中。"));
 }
 
 // ----- 播放 -----
@@ -353,7 +297,7 @@ a.addEventListener("ended", () => {
 });
 a.addEventListener("error", () => {
   if (!cur) return;
-  showMsg("音频加载失败：可能是网络问题，也可能是小宇宙拦了这个请求");
+  showMsg("这一集的音频加载失败：可能是网络问题，也可能是音频地址有误");
 });
 a.addEventListener("waiting", () => { if (!a.paused) showMsg("缓冲中…"); });
 a.addEventListener("playing", () => showMsg(""));
@@ -362,13 +306,15 @@ a.addEventListener("playing", () => showMsg(""));
 $("play").onclick = toggle;
 $("back").onclick = () => skip(-SKIP);
 $("fwd").onclick = () => skip(SKIP);
+function showRate() {
+  $("rate").textContent = state.rate + "x";
+  $("rate").classList.toggle("on", state.rate !== 1);
+}
 $("rate").onclick = () => {
   const i = RATES.indexOf(state.rate);
   state.rate = RATES[(i + 1) % RATES.length];
   a.playbackRate = state.rate;
-  $("rate").textContent = rateLabel(state.rate);
-  $("rate").classList.toggle("on", state.rate !== 1);
-  save();
+  showRate(); save();
 };
 function setSleep(i) {
   sleepIdx = i;
@@ -386,6 +332,7 @@ seek.addEventListener("change", () => {
   a.currentTime = Number(seek.value);
   record(true);
 });
+$("q").addEventListener("input", () => { query = $("q").value.trim(); renderTabs(); render(); });
 
 if ("mediaSession" in navigator) {
   const ms = navigator.mediaSession;
@@ -400,10 +347,19 @@ document.addEventListener("visibilitychange", () => { if (document.hidden) recor
 window.addEventListener("pagehide", () => record(true));
 
 // ----- 启动 -----
-$("rate").textContent = rateLabel(state.rate);
-$("rate").classList.toggle("on", state.rate !== 1);
-render();
-if (state.last && EPS[state.last]) load(state.last, false);
+showRate();
+fetch("shows.json?t=" + Date.now())
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(j => {
+    SHOWS = j.shows || [];
+    SHOWS.forEach(s => s.episodes.forEach(e => {
+      if (e.audio) EPS[e.id] = Object.assign({ show: s.title }, e);
+    }));
+    if (state.tab !== NOW && !SHOWS.some(s => s.id === state.tab)) state.tab = SHOWS.length ? SHOWS[0].id : NOW;
+    renderTabs(); render();
+    if (state.last && EPS[state.last]) load(state.last, false);
+  })
+  .catch(() => { loadErr = "节目列表没加载出来，检查一下网络后刷新页面。"; render(); });
 </script>
 </body>
 </html>
