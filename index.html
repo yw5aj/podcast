@@ -95,8 +95,11 @@
   .ep.now .t { color: var(--amber); }
   .ep .bar { position: absolute; left: 0; top: -1px; height: 2px; background: var(--amber); }
   .ep .chk { flex: none; width: 40px; color: var(--dim); font-size: 17px; }
-  .ep .add { flex: none; width: 40px; color: var(--dim); font-size: 22px; line-height: 1; }
-  .ep .add.in { color: var(--amber); }
+  .ep .add { flex: none; width: 54px; display: flex; align-items: center; justify-content: center; }
+  .ep .add::before { content: "+"; display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: 19px; border: 1.5px solid var(--dim); color: var(--ink);
+    font: 400 26px/1 var(--sans); padding-bottom: 2px; box-sizing: border-box; }
+  .ep .add.in::before { content: "−"; background: var(--amber); border-color: var(--amber); color: var(--amber-ink); }
   .ep .ord { flex: none; width: 38px; color: var(--dim); font-size: 17px; }
   .ep .grip { flex: none; width: 46px; color: var(--dim); font-size: 20px; touch-action: none; cursor: grab; }
   .ep.shift { transition: transform .16s ease; }
@@ -252,7 +255,7 @@ function row(e, withShow) {
     save(); render();
   };
   const inQ = state.queue.includes(e.id);
-  const add = el("button", "add" + (inQ ? " in" : ""), inQ ? "−" : "+");
+  const add = el("button", "add" + (inQ ? " in" : ""));
   add.setAttribute("aria-label", inQ ? "从播放列表移除" : "加入播放列表");
   add.onclick = () => toggleQueue(e.id);
   r.append(b, add, c);
