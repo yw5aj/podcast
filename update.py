@@ -195,9 +195,9 @@ def update_show(show, log):
         old = have.get(ep["id"])
         if old is None:
             new.append(ep)
-        else:  # 已有的单集：只补缺的字段
-            for k in ("min", "date", "audio"):
-                if ep.get(k) and not old.get(k):
+        else:  # 已有的单集：以节目页上的数据为准（补缺，也纠正抄错的地址）
+            for k in ("title", "min", "date", "audio"):
+                if ep.get(k) and old.get(k) != ep[k]:
                     old[k] = ep[k]
                     changed = True
     if new:

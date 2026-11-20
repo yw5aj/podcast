@@ -9,6 +9,7 @@ on:
   push:
     branches: [main]
     paths:
+      - shows.json
       - update.py
       - .github/workflows/update.yml
 
