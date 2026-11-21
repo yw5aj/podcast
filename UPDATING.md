@@ -7,7 +7,7 @@
 - `update.py`：读取每档节目的最新单集，更新 `shows.json`。小宇宙独家的节目读它的公开网页，
   其余节目读标准 RSS。
 - `.github/workflows/update.yml`：GitHub Actions 定时运行 `update.py`，每天四次
-  （UTC 1:17、7:17、13:17、19:17；GitHub 的定时偶尔会漏，多排几次保险）；`shows.json` 或脚本有改动被推送时也会跑一次。
+  （UTC 1:23、7:23、13:23、19:23；GitHub 的定时偶尔会漏，多排几次保险）；`shows.json` 或脚本有改动被推送时也会跑一次。
 - `update-log.txt`：最近一次运行的结果，每档节目一行。
 
 ## 规则
@@ -46,3 +46,10 @@
 - 第一次导入最近 200 集，之后只加新出的。
 - 如果日志里写“RSS 读取失败”，多半是小宇宙托管的 feed（`feed.xyzfm.space`），它拦服务器访问。
   这种节目改用上面的小宇宙方式：`id` 换成小宇宙的节目 id，去掉 `find` 和 `feed`。
+
+## 定时不触发时
+
+GitHub 把“最后修改定时设置的人”当作定时运行的发起人，这个人必须是对仓库有写权限的账号。
+所以 `.github/workflows/update.yml` 里的 `schedule` 一段，必须用仓库主人（yw5aj）的署名提交；
+用别的署名提交后，手动和推送触发都正常，唯独定时不会跑。
+新仓库的定时有时还要先手动运行一次（Actions 页的 Run workflow）才会激活。
