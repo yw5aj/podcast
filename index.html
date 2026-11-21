@@ -67,6 +67,8 @@
   .badge { position: absolute; top: -5px; right: -5px; min-width: 19px; height: 19px; padding: 0 5px;
     border-radius: 10px; background: var(--ink); color: var(--bg); box-shadow: 0 0 0 2px var(--bg);
     font: 700 11.5px/19px var(--sans); text-align: center; font-variant-numeric: tabular-nums; }
+  #more { display: block; width: 100%; border-top: 1px solid var(--line); padding: 16px 0; color: var(--dim);
+    font-size: 14px; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
   .foot { display: flex; gap: 22px; margin: 26px 0 0; }
   .foot button { color: var(--dim); font-size: 14px; padding: 8px 0;
     text-decoration: underline; text-underline-offset: 3px; }
@@ -213,6 +215,8 @@ let lastSave = 0;
 let query = "";
 let loadErr = "";
 let managing = false;
+const PAGE = 40;        // 节目页一次显示多少集
+const shown = {};       // 每档节目当前显示到第几集
 
 // ----- 小工具 -----
 function el(tag, cls, text) {
@@ -308,14 +312,16 @@ function meta(e, withShow) {
   const m = el("div", "m");
   if (withShow) m.appendChild(el("span", null, e.show));
   if (e.date) m.appendChild(el("span", null, when(e.date)));
+  const total = p.d || e.min * 60; // 有的 RSS 不写时长，这时 e.min 是 0
   if (p.done) {
-    m.appendChild(el("span", null, span(e.min)));
+    if (total) m.appendChild(el("span", null, span(total / 60)));
     m.appendChild(el("span", null, "已听完"));
-  } else if (p.t > 5) {
-    const total = p.d || e.min * 60;
+  } else if (p.t > 5 && total) {
     m.appendChild(el("span", "at", "还剩 " + span((total - p.t) / 60 / rateOf(e.showId))));
-  } else {
-    m.appendChild(el("span", null, span(e.min)));
+  } else if (p.t > 5) {
+    m.appendChild(el("span", "at", "听到 " + clock(p.t)));
+  } else if (total) {
+    m.appendChild(el("span", null, span(total / 60)));
   }
   return m;
 }
@@ -567,7 +573,14 @@ function render() {
     head.append(cover(show), txt);
     list.appendChild(head);
     if (!ok.length) list.appendChild(el("div", "note", "这档节目的单集还没抓到，下次更新后会出现。"));
-    ok.forEach(e => list.appendChild(row(EPS[e.id], false)));
+    const limit = shown[show.id] || PAGE;
+    ok.slice(0, limit).forEach(e => list.appendChild(row(EPS[e.id], false)));
+    if (ok.length > limit) {
+      const more = el("button", null, "再显示 " + Math.min(PAGE, ok.length - limit) + " 集（还有 " + (ok.length - limit) + " 集）");
+      more.id = "more";
+      more.onclick = () => { shown[show.id] = limit + PAGE; render(); };
+      list.appendChild(more);
+    }
     return;
   }
 
@@ -575,7 +588,8 @@ function render() {
     const q = query.toLowerCase();
     const hits = playable.filter(e => (e.title + " " + e.show).toLowerCase().includes(q));
     if (!hits.length) list.appendChild(el("div", "note", "没有标题里带“" + query + "”的单集。"));
-    hits.forEach(e => list.appendChild(row(e, true)));
+    hits.slice(0, 60).forEach(e => list.appendChild(row(e, true)));
+    if (hits.length > 60) list.appendChild(el("div", "note", "还有 " + (hits.length - 60) + " 集没列出来，多打几个字缩小范围。"));
     return;
   }
 
@@ -646,7 +660,7 @@ function load(id, autoplay) {
   $("pCover").textContent = "";
   if (s) $("pCover").appendChild(cover(s));
   $("seek").disabled = false;
-  $("seek").max = p.d || e.min * 60;
+  $("seek").max = p.d || e.min * 60 || 1;
   $("seek").value = pendingSeek;
   $("cur").textContent = clock(pendingSeek);
   $("rem").textContent = "-" + clock(($("seek").max) - pendingSeek);

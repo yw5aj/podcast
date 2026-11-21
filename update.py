@@ -1,23 +1,34 @@
 #!/usr/bin/env python3
-"""更新 shows.json：从小宇宙的公开网页读取每档节目的最新单集。
+"""更新 shows.json：读取每档节目的最新单集。
 
-只读取 xiaoyuzhoufm.com 的节目页和单集页，只记录标题、时长、日期、音频地址和封面地址，
-不下载任何音频或图片。只增不减：已有的单集不会被删除。
-运行结果写在 update-log.txt 里，方便排查。
+两种来源：
+- 小宇宙独家的节目：读 xiaoyuzhoufm.com 的公开节目页和单集页。
+- 有标准 RSS 的节目：条目里写 "feed"（RSS 地址），或写 "find"（节目名，脚本会用
+  Apple 播客目录查出 RSS 地址并记下来）。
+
+只记录标题、时长、日期、音频地址和封面地址，不下载任何音频或图片。
+只增不减：已有的单集不会被删除。运行结果写在 update-log.txt 里，方便排查。
 """
 import datetime
+import email.utils
+import hashlib
 import html
 import json
 import re
 import sys
 import time
+import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 
 BASE = "https://www.xiaoyuzhoufm.com"
 UA = ("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) "
       "Chrome/126.0 Mobile Safari/537.36")
 MAX_EPISODE_FETCHES = 80
 PAUSE = 1.5  # 两次请求之间的间隔（秒）
+MAX_RSS_EPISODES = 200  # RSS 节目第一次导入时最多取最近多少集
+ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
+BJ = datetime.timezone(datetime.timedelta(hours=8))
 
 ID_RE = re.compile(r"^[0-9a-f]{24}$")
 AUDIO_RE = re.compile(r"https://media\.xyzcdn\.net/[A-Za-z0-9_\-./]+?\.(?:m4a|mp3)")
@@ -36,6 +47,151 @@ def get(url):
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read().decode("utf-8", "replace")
 
+
+def get_bytes(url, accept="*/*"):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
+    with urllib.request.urlopen(req, timeout=45) as r:
+        return r.read()
+
+
+# ---------- 标准 RSS ----------
+
+def norm(t):
+    return re.sub(r"\s+", "", (t or "")).lower()
+
+
+def resolve_feed(show, log):
+    """用 Apple 播客目录按节目名查 RSS 地址。"""
+    want = norm(show["find"])
+    by = norm(show.get("by"))
+    for country in dict.fromkeys([show.get("country") or "us", "us", "cn"]):
+        q = urllib.parse.urlencode({"term": show["find"], "media": "podcast", "entity": "podcast",
+                                    "limit": 15, "country": country})
+        try:
+            res = json.loads(get_bytes("https://itunes.apple.com/search?" + q).decode("utf-8", "replace"))
+        except Exception as e:  # noqa: BLE001
+            log.append(f"{show['title']}: 查目录失败（{e}）")
+            continue
+        time.sleep(PAUSE)
+        for r in res.get("results", []):
+            name = norm(r.get("collectionName"))
+            if not r.get("feedUrl") or not (name == want or name.startswith(want)):
+                continue
+            if by and by not in norm(r.get("artistName")):
+                continue
+            show["feed"] = r["feedUrl"]
+            log.append(f"{show['title']}: 找到 RSS（{r.get('collectionName')} / {r.get('artistName')}）{r['feedUrl']}")
+            return True
+    log.append(f"{show['title']}: 在播客目录里没找到叫“{show['find']}”的节目")
+    return False
+
+
+def minutes_of(text):
+    """itunes:duration 可能是秒数，也可能是 HH:MM:SS / MM:SS。"""
+    if not text:
+        return 0
+    text = text.strip()
+    try:
+        if ":" in text:
+            sec = 0
+            for part in text.split(":"):
+                sec = sec * 60 + float(part)
+        else:
+            sec = float(text)
+    except ValueError:
+        return 0
+    return max(1, round(sec / 60)) if sec > 0 else 0
+
+
+def parse_feed(xml_bytes, show_id):
+    """返回 (单集列表[从新到旧], 封面地址)。"""
+    root = ET.fromstring(xml_bytes)
+    ch = root.find("channel")
+    if ch is None:
+        return [], None
+    cover = None
+    img = ch.find(ITUNES + "image")
+    if img is not None and img.get("href"):
+        cover = img.get("href")
+    elif ch.find("image/url") is not None:
+        cover = (ch.findtext("image/url") or "").strip() or None
+    if cover and cover.startswith("http://"):
+        cover = "https://" + cover[7:]
+    eps, seen = [], set()
+    for it in ch.findall("item"):
+        enc = it.find("enclosure")
+        url = (enc.get("url") or "").strip() if enc is not None else ""
+        if not url.startswith("http"):
+            continue
+        if url.startswith("http://"):  # 页面是 https，音频也得是
+            url = "https://" + url[7:]
+        guid = (it.findtext("guid") or "").strip() or url
+        eid = hashlib.sha1((show_id + "|" + guid).encode("utf-8")).hexdigest()[:24]
+        if eid in seen:
+            continue
+        seen.add(eid)
+        title = (it.findtext("title") or it.findtext(ITUNES + "title") or "").strip()
+        ep = {"id": eid, "title": html.unescape(title) or "（无标题）",
+              "min": minutes_of(it.findtext(ITUNES + "duration")), "audio": url}
+        try:
+            t = email.utils.parsedate_to_datetime((it.findtext("pubDate") or "").strip())
+            if t.tzinfo is None:
+                t = t.replace(tzinfo=datetime.timezone.utc)
+            ep["date"] = t.astimezone(BJ).strftime("%Y-%m-%d")
+        except (TypeError, ValueError):
+            pass
+        eps.append(ep)
+    if all("date" in e for e in eps):
+        eps.sort(key=lambda e: e["date"], reverse=True)
+    return eps, cover
+
+
+def update_rss_show(show, log):
+    if not show.get("feed") and not resolve_feed(show, log):
+        return False
+    changed = False
+    try:
+        listed, cover = parse_feed(get_bytes(show["feed"], "application/rss+xml, application/xml, text/xml, */*"),
+                                   show["id"])
+    except Exception as e:  # noqa: BLE001
+        log.append(f"{show['title']}: RSS 读取失败（{e}）")
+        return True  # feed 地址可能刚查到，要保存
+    if not listed:
+        log.append(f"{show['title']}: RSS 里没有带音频的单集")
+        return True
+    if cover and show.get("cover") != cover:
+        show["cover"] = cover
+        changed = True
+    have = {e["id"]: e for e in show["episodes"]}
+    first_import = not show["episodes"]
+    new = []
+    for ep in listed:
+        old = have.get(ep["id"])
+        if old is None:
+            new.append(ep)
+        else:
+            for k in ("title", "min", "date", "audio"):
+                if ep.get(k) and old.get(k) != ep[k]:
+                    old[k] = ep[k]
+                    changed = True
+    if first_import:
+        new = new[:MAX_RSS_EPISODES]
+    elif show["episodes"] and show["episodes"][0].get("date"):
+        # 之后只收比已有最新一集更新的，不回头去补更早的
+        newest = show["episodes"][0]["date"]
+        new = [e for e in new if e.get("date", "9999") >= newest]
+    if new:
+        show["episodes"] = new + show["episodes"]
+        show["episodes"].sort(key=lambda e: e.get("date", ""), reverse=True)
+        changed = True
+    note = f"{show['title']}: 可播放 {len(show['episodes'])} 集（RSS）"
+    if new:
+        note += f"，新增 {len(new)} 集"
+    log.append(note)
+    return changed
+
+
+# ---------- 小宇宙网页 ----------
 
 def next_data(page):
     m = NEXT_RE.search(page)
@@ -174,6 +330,8 @@ def fill_from_episode_page(ep):
 
 
 def update_show(show, log):
+    if show.get("feed") or show.get("find"):
+        return update_rss_show(show, log)
     pid = show["id"]
     try:
         page = get(f"{BASE}/podcast/{pid}")
