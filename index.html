@@ -322,7 +322,7 @@ function meta(e, withShow) {
     if (total) m.appendChild(el("span", null, span(total / 60)));
     m.appendChild(el("span", null, "已听完"));
   } else if (p.t > 5 && total) {
-    m.appendChild(el("span", "at", "还剩 " + span((total - p.t) / 60 / rateOf(e.showId))));
+    m.appendChild(el("span", "at", "还剩 " + span((total - p.t) / 60))); // 原速时长，不随倍速变
   } else if (p.t > 5) {
     m.appendChild(el("span", "at", "听到 " + clock(p.t)));
   } else if (total) {
