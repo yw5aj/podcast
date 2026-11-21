@@ -20,6 +20,7 @@ import time
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+import zoneinfo
 
 BASE = "https://www.xiaoyuzhoufm.com"
 UA = ("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -28,7 +29,7 @@ MAX_EPISODE_FETCHES = 80
 PAUSE = 1.5  # 两次请求之间的间隔（秒）
 MAX_RSS_EPISODES = 200  # RSS 节目第一次导入时最多取最近多少集
 ITUNES = "{http://www.itunes.com/dtds/podcast-1.0.dtd}"
-BJ = datetime.timezone(datetime.timedelta(hours=8))
+TZ = zoneinfo.ZoneInfo("America/Los_Angeles")  # 所有日期都按旧金山时间算
 
 ID_RE = re.compile(r"^[0-9a-f]{24}$")
 AUDIO_RE = re.compile(r"https://media\.xyzcdn\.net/[A-Za-z0-9_\-./]+?\.(?:m4a|mp3)")
@@ -141,7 +142,7 @@ def parse_feed(xml_bytes, show_id):
             t = email.utils.parsedate_to_datetime((it.findtext("pubDate") or "").strip())
             if t.tzinfo is None:
                 t = t.replace(tzinfo=datetime.timezone.utc)
-            ep["date"] = t.astimezone(BJ).strftime("%Y-%m-%d")
+            ep["date"] = t.astimezone(TZ).strftime("%Y-%m-%d")
         except (TypeError, ValueError):
             pass
         eps.append(ep)
@@ -229,7 +230,7 @@ def audio_of(d):
 
 
 def date_of(s):
-    """ISO 时间 -> 北京时间的 YYYY-MM-DD。"""
+    """ISO 时间 -> 旧金山时间的 YYYY-MM-DD。"""
     if not isinstance(s, str):
         return None
     try:
@@ -238,7 +239,7 @@ def date_of(s):
         return s[:10] if re.match(r"\d{4}-\d{2}-\d{2}", s) else None
     if t.tzinfo is None:
         t = t.replace(tzinfo=datetime.timezone.utc)
-    return t.astimezone(datetime.timezone(datetime.timedelta(hours=8))).strftime("%Y-%m-%d")
+    return t.astimezone(TZ).strftime("%Y-%m-%d")
 
 
 def episode_from_dict(d):
@@ -406,8 +407,7 @@ def main():
     else:
         changed = json.dumps(data, ensure_ascii=False, sort_keys=True) != before
         if changed:
-            data["updated"] = datetime.datetime.now(
-                datetime.timezone(datetime.timedelta(hours=8))).strftime("%Y-%m-%d")
+            data["updated"] = datetime.datetime.now(TZ).strftime("%Y-%m-%d")
             with open("shows.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=1)
                 f.write("\n")

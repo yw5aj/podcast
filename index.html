@@ -237,7 +237,11 @@ function span(min) { // 259 -> "4 小时 19 分"
   return h ? h + " 小时" + (m ? " " + m + " 分" : "") : m + " 分钟";
 }
 function dayNum(d) { const p = d.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5; }
-function today() { return Math.floor((Date.now() + 8 * 36e5) / 864e5); } // 日期按北京时间算
+function todayStr() { // 日期统一按旧金山时间算，和 shows.json 里存的一致
+  try { return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date()); }
+  catch (e) { return new Date(Date.now() - 8 * 36e5).toISOString().slice(0, 10); }
+}
+function today() { return dayNum(todayStr()); }
 function ageDays(d) { return d ? today() - dayNum(d) : Infinity; }
 function when(d) { // "3 天前"；两周以上写日期
   const n = ageDays(d);
@@ -245,7 +249,7 @@ function when(d) { // "3 天前"；两周以上写日期
   if (n === 1) return "昨天";
   if (n < NEW_DAYS) return n + " 天前";
   const p = d.split("-");
-  const thisYear = new Date(Date.now() + 8 * 36e5).getUTCFullYear();
+  const thisYear = +todayStr().slice(0, 4);
   return (+p[0] === thisYear ? "" : p[0] + "年") + (+p[1]) + "月" + (+p[2]) + "日";
 }
 function rateOf(showId) { return state.showRate[showId] || state.rate || 1; }
