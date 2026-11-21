@@ -51,7 +51,11 @@ def get(url):
 def get_bytes(url, accept="*/*"):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept})
     with urllib.request.urlopen(req, timeout=45) as r:
-        return r.read()
+        data = r.read()
+    if data[:2] == b"\x1f\x8b":  # 有的服务器不管要没要都返回压缩内容
+        import gzip
+        data = gzip.decompress(data)
+    return data
 
 
 # ---------- 标准 RSS ----------
