@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-20",
+ "updated": "2026-11-21",
  "shows": [
   {
    "id": "625635587bfca4e73e990703",
@@ -571,6 +571,13 @@
    "id": "61e7b5314675a08411f51319",
    "title": "Talk三联",
    "episodes": [
+    {
+     "id": "6b001783fe62f8f52c4e26dd",
+     "title": "EP295 踏访喜马拉雅：“亚洲水塔”的危机，离我们有多远？",
+     "min": 57,
+     "date": "2026-11-21",
+     "audio": "https://media.xyzcdn.net/61e7b5314675a08411f51319/lpPgvhWFkk1FFmDHdvLMcUUECXZW.m4a"
+    },
     {
      "id": "6af71cf33caef3b52f555a59",
      "title": "EP294 一款救命药，要等多少年：中国创新药的崛起之路",
@@ -4895,6 +4902,13 @@
    "find": "The a16z Show",
    "country": "us",
    "episodes": [
+    {
+     "id": "3723dee63f7c3545a13d5210",
+     "title": "The Professional Network Built for You and Your AI Agent",
+     "min": 18,
+     "audio": "https://mgln.ai/e/1344/afp-848985-injected.calisto.simplecastaudio.com/3f86df7b-51c6-4101-88a2-550dba782de8/episodes/f0a94159-1e7b-4208-9088-df19e8314067/audio/128/default.mp3?aid=rss_feed&awCollectionId=3f86df7b-51c6-4101-88a2-550dba782de8&awEpisodeId=f0a94159-1e7b-4208-9088-df19e8314067&feed=JGE3yC0V",
+     "date": "2026-11-21"
+    },
     {
      "id": "36b1b22db78d41bca00318dc",
      "title": "Why the Agent Era Needs a New Operating System | DHH",
