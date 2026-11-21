@@ -7,21 +7,12 @@ Talk三联: 可播放 15/15 集
 her edition: 可播放 10/10 集
 时雨集: 可播放 15/15 集
 马尔克斯的朋友: 可播放 15/15 集
-Freakonomics Radio: 找到 RSS（Freakonomics Radio / Freakonomics Radio + Stitcher）https://feeds.simplecast.com/Y8lFbOT4
-Freakonomics Radio: 可播放 200 集（RSS），新增 200 集
-No Priors: 找到 RSS（No Priors: Artificial Intelligence | Technology | Startups / Conviction）https://feeds.megaphone.fm/nopriors
-No Priors: 可播放 189 集（RSS），新增 189 集
-Road to Resilience: 找到 RSS（Road to Resilience / Mount Sinai Health System）https://rss.buzzsprout.com/183065.rss
-Road to Resilience: 可播放 165 集（RSS），新增 165 集
-The a16z Show: 找到 RSS（The a16z Show / Andreessen Horowitz）https://feeds.simplecast.com/JGE3yC0V
-The a16z Show: 可播放 200 集（RSS），新增 200 集
-不止读书: 找到 RSS（不止读书 / 魏小河）http://www.ximalaya.com/album/47548262.xml
-不止读书: 可播放 200 集（RSS），新增 200 集
-无人知晓: 找到 RSS（无人知晓 / 孟岩）https://feed.xyzfm.space/ypn9dydpbxpc
-无人知晓: RSS 读取失败（syntax error: line 1, column 0）
-知行小酒馆: 找到 RSS（知行小酒馆 / 有知有行）https://feed.xyzfm.space/j8yp8gxkmgqr
-知行小酒馆: RSS 读取失败（syntax error: line 1, column 0）
-硅谷101: 找到 RSS（硅谷101 / 硅谷101）https://feeds.fireside.fm/sv101/rss
-硅谷101: 可播放 200 集（RSS），新增 200 集
-贝望录: 找到 RSS（贝望录 / Withinlink）http://www.ximalaya.com/album/42715423.xml
-贝望录: 可播放 200 集（RSS），新增 200 集
+Freakonomics Radio: 可播放 200 集（RSS）
+No Priors: 可播放 189 集（RSS）
+Road to Resilience: 可播放 165 集（RSS）
+The a16z Show: 可播放 200 集（RSS）
+不止读书: 可播放 200 集（RSS）
+无人知晓: 可播放 15/15 集，新增 15 集
+知行小酒馆: 可播放 15/15 集，新增 15 集
+硅谷101: 可播放 200 集（RSS）
+贝望录: 可播放 200 集（RSS）
