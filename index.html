@@ -119,6 +119,7 @@
     border-top: 1px solid var(--line); padding: 12px 16px calc(10px + env(safe-area-inset-bottom)); z-index: 6; }
   #pGo { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; }
   #pCover { flex: none; width: 46px; }
+  #pCover:empty { display: none; }
   #pCover .cover { font-size: 22px; border-radius: 7px; }
   #pGo .txt { flex: 1; min-width: 0; }
   #pTitle { font: 500 15px/1.4 var(--serif); overflow: hidden;
@@ -609,8 +610,11 @@ function render() {
       list.appendChild(el("div", "lead", "听到一半的"));
       going.forEach(e => list.appendChild(row(e, true)));
     }
+    // 每档节目最多列两集，免得更新勤的节目把别的挤掉；其余的看封面角标
+    const perShow = {};
     const fresh = playable.filter(e => !state.hidden[e.showId] && isNew(e) && !midway(e.id))
-      .sort((x, y) => dayNum(y.date) - dayNum(x.date)).slice(0, 12);
+      .sort((x, y) => dayNum(y.date) - dayNum(x.date))
+      .filter(e => (perShow[e.showId] = (perShow[e.showId] || 0) + 1) <= 2).slice(0, 14);
     if (fresh.length) {
       list.appendChild(el("div", "lead", "新出的"));
       fresh.forEach(e => list.appendChild(row(e, true)));
