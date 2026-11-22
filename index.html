@@ -481,6 +481,16 @@ function manageRow(s) {
 
 // ----- 备份与恢复：进度只存在这个浏览器里，导出成文件可以兜底 -----
 let backupMsg = "";
+let showsOpen = false;
+function lastBackupText() {
+  if (!state.backupAt) return "还没备份过";
+  const f = t => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles" }).format(new Date(t));
+  const day = f(state.backupAt);
+  if (day === f(Date.now())) return "上次备份：今天";
+  const days = Math.round((Date.parse(f(Date.now())) - Date.parse(day)) / 86400000);
+  const m = day.split("-");
+  return "上次备份：" + Number(m[1]) + " 月 " + Number(m[2]) + " 日（" + days + " 天前）";
+}
 function exportBackup() {
   const d = new Date();
   const name = "贴贴电台备份-" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" +
@@ -492,6 +502,7 @@ function exportBackup() {
   document.body.appendChild(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 5000);
   const n = Object.keys(state.prog).length;
+  state.backupAt = Date.now(); save();
   backupMsg = "已导出 " + name + "，里面有 " + n + " 集的进度。文件在手机的“下载”里。";
   render();
 }
@@ -525,14 +536,12 @@ function settingsView(list) {
   const head = el("div", "qhead");
   head.append(el("h1", null, "设置"), el("p", null, "这些设置只对这台手机生效"));
   list.appendChild(head);
-  list.appendChild(el("div", "lead", "显示哪些节目"));
-  SHOWS.forEach(s => list.appendChild(manageRow(s)));
   list.appendChild(el("div", "lead", "备份与恢复"));
   const box = el("div", "bk");
   box.style.marginTop = "10px";
   box.appendChild(el("p", null, "听到哪、播放列表、倍速，都只存在这台手机的这个浏览器里。清除浏览器数据或换手机之前，先导出一份。导出的是一个小文件，可以再存到网盘里。"));
   const ex = el("button", "act");
-  ex.append(el("b", null, "导出备份文件"), el("span", null, "现在有 " + Object.keys(state.prog).length + " 集的进度"));
+  ex.append(el("b", null, "导出备份文件"), el("span", null, lastBackupText() + "　现在有 " + Object.keys(state.prog).length + " 集的进度"));
   ex.onclick = exportBackup;
   const im = el("button", "act");
   im.append(el("b", null, "从备份文件恢复"), el("span", null, "每一集保留较新的进度；播放列表、倍速、隐藏的节目以备份为准"));
@@ -550,6 +559,17 @@ function settingsView(list) {
   box.append(ex, im, file);
   if (backupMsg) box.appendChild(el("div", "res", backupMsg));
   list.appendChild(box);
+  // 节目多了列表很长，默认收起，只留一行
+  const nHidden = SHOWS.filter(x => state.hidden[x.id]).length;
+  const fold = el("button", "act fold");
+  fold.setAttribute("aria-expanded", String(showsOpen));
+  fold.append(el("b", null, "显示哪些节目"),
+    el("span", null, "共 " + SHOWS.length + " 档" + (nHidden ? "，隐藏了 " + nHidden + " 档" : "，全部显示中") + (showsOpen ? "　点这里收起" : "　点这里展开")));
+  fold.onclick = () => { showsOpen = !showsOpen; render(); };
+  list.appendChild(el("div", "lead", "节目"));
+  const fb = el("div", "bk"); fb.style.marginTop = "10px"; fb.appendChild(fold);
+  list.appendChild(fb);
+  if (showsOpen) SHOWS.forEach(x => list.appendChild(manageRow(x)));
 }
 
 // ----- 渲染 -----
@@ -820,7 +840,7 @@ seek.addEventListener("change", () => {
 $("q").addEventListener("input", () => { query = $("q").value.trim(); render(); });
 $("back2").onclick = () => { location.hash = ""; };
 $("qbtn").onclick = () => { location.hash = "queue"; };
-$("setbtn").onclick = () => { backupMsg = ""; location.hash = "settings"; };
+$("setbtn").onclick = () => { backupMsg = ""; showsOpen = false; location.hash = "settings"; };
 window.addEventListener("hashchange", () => { render(); window.scrollTo(0, 0); });
 
 if ("mediaSession" in navigator) {
