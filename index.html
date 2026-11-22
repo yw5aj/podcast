@@ -534,17 +534,16 @@ function importBackup(text) {
 }
 function settingsView(list) {
   const head = el("div", "qhead");
-  head.append(el("h1", null, "设置"), el("p", null, "这些设置只对这台手机生效"));
+  head.append(el("h1", null, "设置"), el("p", null, "进度只存在这台手机里，换手机前先导出"));
   list.appendChild(head);
   list.appendChild(el("div", "lead", "备份与恢复"));
   const box = el("div", "bk");
   box.style.marginTop = "10px";
-  box.appendChild(el("p", null, "听到哪、播放列表、倍速，都只存在这台手机的这个浏览器里。清除浏览器数据或换手机之前，先导出一份。导出的是一个小文件，可以再存到网盘里。"));
   const ex = el("button", "act");
-  ex.append(el("b", null, "导出备份文件"), el("span", null, lastBackupText() + "　现在有 " + Object.keys(state.prog).length + " 集的进度"));
+  ex.append(el("b", null, "导出备份文件"), el("span", null, lastBackupText()));
   ex.onclick = exportBackup;
   const im = el("button", "act");
-  im.append(el("b", null, "从备份文件恢复"), el("span", null, "每一集保留较新的进度；播放列表、倍速、隐藏的节目以备份为准"));
+  im.append(el("b", null, "从备份文件恢复"), el("span", null, "不会盖掉更新的进度"));
   const file = document.createElement("input");
   file.type = "file"; file.accept = "application/json,.json"; file.hidden = true;
   file.onchange = () => {
@@ -564,7 +563,7 @@ function settingsView(list) {
   const fold = el("button", "act fold");
   fold.setAttribute("aria-expanded", String(showsOpen));
   fold.append(el("b", null, "显示哪些节目"),
-    el("span", null, "共 " + SHOWS.length + " 档" + (nHidden ? "，隐藏了 " + nHidden + " 档" : "，全部显示中") + (showsOpen ? "　点这里收起" : "　点这里展开")));
+    el("span", null, SHOWS.length + " 档" + (nHidden ? "，隐藏了 " + nHidden + " 档" : "") + (showsOpen ? "　收起" : "　展开")));
   fold.onclick = () => { showsOpen = !showsOpen; render(); };
   list.appendChild(el("div", "lead", "节目"));
   const fb = el("div", "bk"); fb.style.marginTop = "10px"; fb.appendChild(fold);
