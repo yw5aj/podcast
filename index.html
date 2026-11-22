@@ -205,6 +205,8 @@ try {
 if (!state.hidden) state.hidden = {};
 if (!state.showRate) state.showRate = {};
 if (!Array.isArray(state.queue)) state.queue = [];
+// 早先的版本点 × 会顺带标成"已听"，现在不这样了：把那些改回"没听完"
+Object.values(state.prog).forEach(p => { if (p && p.skip && p.done) p.done = false; });
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { storageOK = false; }
 }
@@ -258,14 +260,15 @@ function rateOf(showId) { return state.showRate[showId] || state.rate || 1; }
 function isDone(id) { return !!(state.prog[id] || {}).done; }
 function midway(id) { // 听到一半：听过一阵子、没听完
   const p = state.prog[id];
-  return !!p && !p.done && p.t > MIN_MIDWAY;
+  return !!p && !p.done && !p.skip && p.t > MIN_MIDWAY;
 }
+function skipped(id) { return !!(state.prog[id] || {}).skip; } // 在首页点过 ×：不再往首页上放
 function resumeAt(p) { // 该从哪里接着放；接近结尾或没有进度就从头
   if (!p || !(p.t > 5)) return 0;
   if (p.d && p.t > p.d - 20) return 0;
   return p.t;
 }
-function isNew(e) { return ageDays(e.date) < NEW_DAYS && !isDone(e.id); }
+function isNew(e) { return ageDays(e.date) < NEW_DAYS && !isDone(e.id) && !skipped(e.id); }
 function viewShow() {
   const m = /^#s-([0-9a-f]{24})$/.exec(location.hash);
   return m ? SHOWS.find(s => s.id === m[1]) || null : null;
@@ -322,7 +325,7 @@ function meta(e, withShow) {
   const total = p.d || e.min * 60; // 有的 RSS 不写时长，这时 e.min 是 0
   if (p.done) {
     if (total) m.appendChild(el("span", null, span(total / 60)));
-    m.appendChild(el("span", null, p.skip ? "没听完，跳过了" : "已听完"));
+    m.appendChild(el("span", null, "已听完"));
   } else if (p.t > 5 && total) {
     m.appendChild(el("span", "at", "还剩 " + span((total - p.t) / 60))); // 原速时长，不随倍速变
   } else if (p.t > 5) {
@@ -351,12 +354,12 @@ function row(e, withShow, canSkip) {
   const add = el("button", "add" + (inQ ? " in" : ""), inQ ? "−" : "+");
   add.setAttribute("aria-label", inQ ? "从播放列表移除" : "加入播放列表");
   add.onclick = () => toggleQueue(e.id);
-  if (canSkip) { // "听到一半的"里：右边是"不听了"，点了就不再出现在首页
+  if (canSkip) { // "听到一半的"里：右边是"先不听了"。只是不再往首页上放，不算听过，进度也留着
     const sk = el("button", "skip", "×");
-    sk.setAttribute("aria-label", "不听了，从这里移走");
+    sk.setAttribute("aria-label", "先不听了，从首页移走");
     sk.onclick = () => {
       const q = state.prog[e.id] = state.prog[e.id] || { t: 0 };
-      q.done = true; q.skip = true;
+      q.skip = true;
       save(); render();
     };
     r.append(c, b, sk);
@@ -627,7 +630,7 @@ function render() {
     .sort((x, y) => (state.prog[y.id].at || 0) - (state.prog[x.id].at || 0)).slice(0, 5);
   if (going.length) {
     const lead = el("div", "lead", "听到一半的");
-    lead.appendChild(el("small", null, "不想听了点 ×"));
+    lead.appendChild(el("small", null, "先不听了点 ×"));
     list.appendChild(lead);
     going.forEach(e => list.appendChild(row(e, true, true)));
   }
@@ -687,6 +690,8 @@ function load(id, autoplay) {
   if (autoplay) a.play().catch(() => showMsg("没能开始播放，再点一次播放键。"));
 }
 function play(id) {
+  const p = state.prog[id];
+  if (p && p.skip) { delete p.skip; save(); } // 又点开听了：重新算作在听
   if (id === cur) { toggle(); return; }
   load(id, true);
 }
