@@ -1,6 +1,6 @@
 {
-  "name": "我的播客",
-  "short_name": "播客",
+  "name": "贴贴电台",
+  "short_name": "贴贴电台",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

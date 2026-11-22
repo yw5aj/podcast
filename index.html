@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#eef0f5" media="(prefers-color-scheme: light)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>我的播客</title>
+<title>贴贴电台</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -480,7 +480,7 @@ function manageRow(s) {
 let backupMsg = "";
 function exportBackup() {
   const d = new Date();
-  const name = "播客进度备份-" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" +
+  const name = "贴贴电台备份-" + d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" +
     String(d.getDate()).padStart(2, "0") + ".json";
   const data = { app: "xyzplayer", version: 1, exported: d.toISOString(), state: state };
   const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }));
