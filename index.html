@@ -849,7 +849,9 @@ if ("mediaSession" in navigator) {
   set("pause", () => a.pause());
   set("seekbackward", () => skip(-SKIP));
   set("seekforward", () => skip(SKIP));
-  set("nexttrack", nextInQueue);
+  // 车上/耳机的「上一首/下一首」键发的是 previoustrack/nexttrack，这里改成后退/前进 15 秒
+  set("previoustrack", () => skip(-SKIP));
+  set("nexttrack", () => skip(SKIP));
   set("seekto", d => { if (d && d.seekTime != null) { a.currentTime = d.seekTime; record(true); } });
 }
 document.addEventListener("visibilitychange", () => { if (document.hidden) record(true); else showSleep(); });
