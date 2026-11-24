@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23",
+ "updated": "2026-11-24",
  "shows": [
   {
    "id": "625635587bfca4e73e990703",
@@ -4916,6 +4916,13 @@
    "find": "The a16z Show",
    "country": "us",
    "episodes": [
+    {
+     "id": "fcd444ab2eddd479e32d4353",
+     "title": "REPLAY: The Story of Apple Pay | Jennifer Bailey (2024)",
+     "min": 31,
+     "audio": "https://mgln.ai/e/1344/afp-848985-injected.calisto.simplecastaudio.com/3f86df7b-51c6-4101-88a2-550dba782de8/episodes/02cb7d51-09f9-4aae-907e-64eee1212c6d/audio/128/default.mp3?aid=rss_feed&awCollectionId=3f86df7b-51c6-4101-88a2-550dba782de8&awEpisodeId=02cb7d51-09f9-4aae-907e-64eee1212c6d&feed=JGE3yC0V",
+     "date": "2026-11-24"
+    },
     {
      "id": "31f4b88adf26647292004b47",
      "title": "The One-Person Biotech | OpenAI Life Sciences",
