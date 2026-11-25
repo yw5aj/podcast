@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-24",
+ "updated": "2026-11-25",
  "shows": [
   {
    "id": "625635587bfca4e73e990703",
@@ -1014,6 +1014,13 @@
    "find": "Freakonomics Radio",
    "country": "us",
    "episodes": [
+    {
+     "id": "e11842502f503a89d33aa8c5",
+     "title": "Why Is It So Hard (and Expensive) to Build Anything in America? (Update)",
+     "min": 54,
+     "audio": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/87c84c55-8d95-471f-9ef9-ae2733da1461/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=87c84c55-8d95-471f-9ef9-ae2733da1461&feed=Y8lFbOT4",
+     "date": "2026-11-25"
+    },
     {
      "id": "942f21e7b2d7896596d3bddf",
      "title": "696. Build, Baby, Build!",
@@ -3749,7 +3756,7 @@
     }
    ],
    "feed": "https://feeds.megaphone.fm/nopriors",
-   "cover": "https://megaphone.imgix.net/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
+   "cover": "https://megaphone-images.spotifycdn.com/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
   },
   {
    "id": "2384ab50855b137ea96e41f3",
@@ -4923,6 +4930,13 @@
    "find": "The a16z Show",
    "country": "us",
    "episodes": [
+    {
+     "id": "22493b7c2885e9a180acdd29",
+     "title": "Replay: Principles and Algorithms for Work and Life | Ray Dalio (2019)",
+     "min": 50,
+     "audio": "https://mgln.ai/e/1344/afp-848985-injected.calisto.simplecastaudio.com/3f86df7b-51c6-4101-88a2-550dba782de8/episodes/aa7582d3-bf6b-4e30-8ea2-ce0403927f04/audio/128/default.mp3?aid=rss_feed&awCollectionId=3f86df7b-51c6-4101-88a2-550dba782de8&awEpisodeId=aa7582d3-bf6b-4e30-8ea2-ce0403927f04&feed=JGE3yC0V",
+     "date": "2026-11-25"
+    },
     {
      "id": "fcd444ab2eddd479e32d4353",
      "title": "REPLAY: The Story of Apple Pay | Jennifer Bailey (2024)",
