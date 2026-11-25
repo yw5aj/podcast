@@ -3756,7 +3756,7 @@
     }
    ],
    "feed": "https://feeds.megaphone.fm/nopriors",
-   "cover": "https://megaphone-images.spotifycdn.com/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
+   "cover": "https://megaphone.imgix.net/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
   },
   {
    "id": "2384ab50855b137ea96e41f3",

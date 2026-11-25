@@ -7,10 +7,10 @@ Talk三联: 可播放 16/16 集
 her edition: 可播放 10/10 集
 时雨集: 可播放 15/15 集
 马尔克斯的朋友: 可播放 16/16 集
-Freakonomics Radio: 可播放 201 集（RSS），新增 1 集
+Freakonomics Radio: 可播放 201 集（RSS）
 No Priors: 可播放 189 集（RSS）
 Road to Resilience: 可播放 165 集（RSS）
-The a16z Show: 可播放 205 集（RSS），新增 1 集
+The a16z Show: 可播放 205 集（RSS）
 不止读书: 可播放 200 集（RSS）
 无人知晓: 可播放 15/15 集
 知行小酒馆: 可播放 15/15 集
