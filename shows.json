@@ -1022,6 +1022,13 @@
    "country": "us",
    "episodes": [
     {
+     "id": "f115c567161fed86cd3facd7",
+     "title": "697. Whose Game Are You Playing?",
+     "min": 60,
+     "audio": "https://mgln.ai/e/2/pdst.fm/e/dts.podtrac.com/redirect.mp3/stitcher.simplecastaudio.com/2be48404-a43c-4fa8-a32c-760a3216272e/episodes/9eaecef9-93dd-42c7-b931-4f06bb173eaf/audio/128/default.mp3?aid=rss_feed&awCollectionId=2be48404-a43c-4fa8-a32c-760a3216272e&awEpisodeId=9eaecef9-93dd-42c7-b931-4f06bb173eaf&feed=Y8lFbOT4",
+     "date": "2026-11-27"
+    },
+    {
      "id": "e11842502f503a89d33aa8c5",
      "title": "Why Is It So Hard (and Expensive) to Build Anything in America? (Update)",
      "min": 54,
@@ -3763,7 +3770,7 @@
     }
    ],
    "feed": "https://feeds.megaphone.fm/nopriors",
-   "cover": "https://megaphone.imgix.net/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
+   "cover": "https://megaphone-images.spotifycdn.com/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
   },
   {
    "id": "2384ab50855b137ea96e41f3",
@@ -4944,6 +4951,13 @@
    "find": "The a16z Show",
    "country": "us",
    "episodes": [
+    {
+     "id": "cd8e04183bd8d07c79385217",
+     "title": "Replay: From Swipe to Scale: How Tinder Became #1 (2024)",
+     "min": 27,
+     "audio": "https://mgln.ai/e/1344/afp-848985-injected.calisto.simplecastaudio.com/3f86df7b-51c6-4101-88a2-550dba782de8/episodes/f249c8d5-7395-4fe5-a36c-afbc59d5485f/audio/128/default.mp3?aid=rss_feed&awCollectionId=3f86df7b-51c6-4101-88a2-550dba782de8&awEpisodeId=f249c8d5-7395-4fe5-a36c-afbc59d5485f&feed=JGE3yC0V",
+     "date": "2026-11-27"
+    },
     {
      "id": "241a2597b4d8a86ecbc133dc",
      "title": "Replay: On Food as Medicine (2020)",
