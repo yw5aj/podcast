@@ -3770,7 +3770,7 @@
     }
    ],
    "feed": "https://feeds.megaphone.fm/nopriors",
-   "cover": "https://megaphone-images.spotifycdn.com/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
+   "cover": "https://megaphone.imgix.net/podcasts/803e0244-9d0f-11ed-923a-4bb54bf77468/image/NO_PRIORS_ALBUM_and_PROFILE_PIC-01.jpg?ixlib=rails-4.3.1&max-w=3000&max-h=3000&fit=crop&auto=format,compress"
   },
   {
    "id": "2384ab50855b137ea96e41f3",
@@ -7930,6 +7930,13 @@
    "id": "6013f9f58e2f7ee375cf4216",
    "title": "知行小酒馆",
    "episodes": [
+    {
+     "id": "6b0922a58006ecbdc5f9aaa4",
+     "title": "E260 对话美术史家巫鸿：我们以为熟悉的世界，还有多少没被看见？",
+     "min": 67,
+     "date": "2026-11-27",
+     "audio": "https://media.xyzcdn.net/6013f9f58e2f7ee375cf4216/ll78cotunnI-xq-G2k2K9rk9dNJI.m4a"
+    },
     {
      "id": "6affef42a4a79edf137c2a66",
      "title": "E259 投资茶话会：今年的市场，为什么让我们这么心累？",
