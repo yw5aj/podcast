@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-26",
+ "updated": "2026-11-27",
  "shows": [
   {
    "id": "625635587bfca4e73e990703",
@@ -781,6 +781,13 @@
    "id": "697d89b181f5d59286969451",
    "title": "时雨集",
    "episodes": [
+    {
+     "id": "6b094cb48006ecbdc5f9f20d",
+     "title": "从临终到入殓：最后一次被照顾的权利",
+     "min": 139,
+     "date": "2026-11-27",
+     "audio": "https://media.xyzcdn.net/697d89b181f5d59286969451/lrAPysun5AqvzpIT5KgHngAnSBnp.m4a"
+    },
     {
      "id": "6a37b1bb75ba9e0c5336bc8a",
      "title": "离上帝太远，离美国太近：北大毒枭的墨西哥淘金记",
