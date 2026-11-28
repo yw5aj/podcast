@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-27",
+ "updated": "2026-11-28",
  "shows": [
   {
    "id": "625635587bfca4e73e990703",
@@ -585,6 +585,13 @@
    "id": "61e7b5314675a08411f51319",
    "title": "Talk三联",
    "episodes": [
+    {
+     "id": "6b093fe37ca7884a50f372cb",
+     "title": "EP296 颜值＞味道？拆解网红水果的出圈密码",
+     "min": 79,
+     "date": "2026-11-28",
+     "audio": "https://media.xyzcdn.net/61e7b5314675a08411f51319/ltASV5bqNPpQbWSl7bmJFF5Ay91a.m4a"
+    },
     {
      "id": "6b001783fe62f8f52c4e26dd",
      "title": "EP295 踏访喜马拉雅：“亚洲水塔”的危机，离我们有多远？",
